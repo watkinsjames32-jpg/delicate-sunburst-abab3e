@@ -164,7 +164,7 @@ export const merch: MerchItem[] = [
     format: 'Unisex heavyweight cotton tee',
     description:
       'The everyday Koi Ware staple — a soft heavyweight cotton tee with the koi mark across the chest, cut to keep its shape wash after wash.',
-    priceCents: 3000,
+    priceCents: 3500,
     photos: [
       {
         src: '/img/koi-ware-logo-tee-black.jpg',
@@ -184,7 +184,7 @@ export const merch: MerchItem[] = [
     format: 'Unisex cotton tee, front + back print',
     description:
       'Cover art on the front, lyric print across the back. Released alongside the single.',
-    priceCents: 3000,
+    priceCents: 3500,
     sizes: APPAREL_SIZES,
   },
   {
