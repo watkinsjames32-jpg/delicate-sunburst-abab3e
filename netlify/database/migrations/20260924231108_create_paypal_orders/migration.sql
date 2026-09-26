@@ -1,0 +1,21 @@
+CREATE TABLE "paypal_orders" (
+	"id" serial PRIMARY KEY,
+	"paypal_order_id" text NOT NULL UNIQUE,
+	"access_token" text NOT NULL UNIQUE,
+	"status" text DEFAULT 'created' NOT NULL,
+	"kind" text NOT NULL,
+	"sku" text NOT NULL,
+	"title" text NOT NULL,
+	"size" text,
+	"item_cents" integer NOT NULL,
+	"shipping_cents" integer DEFAULT 0 NOT NULL,
+	"total_cents" integer NOT NULL,
+	"currency" text DEFAULT 'USD' NOT NULL,
+	"capture_id" text,
+	"buyer_name" text,
+	"buyer_email" text,
+	"shipping_address" jsonb,
+	"download_count" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"completed_at" timestamp
+);
