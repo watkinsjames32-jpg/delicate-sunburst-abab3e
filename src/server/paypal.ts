@@ -57,6 +57,9 @@ type PaypalConfig = {
 const CLIENT_ID_NAMES = ['PAYPAL_CLIENT_ID', 'PAYPAL_LONDONKOI_CLIENT_ID', 'LONDONKOI_PAYPAL_CLIENT_ID']
 const CLIENT_SECRET_NAMES = [
   'PAYPAL_CLIENT_SECRET',
+  // An existing Netlify setting was saved with this typo. Prefer the standard
+  // name above, but keep checkout working until the setting can be renamed.
+  'PAYPAL_CLIENT_SRCRET',
   'LONDONKOI_PAYPAL_CLIENT_SECRET',
   'PAYPAL_LONDONKOI_CLIENT_SECRET',
   'PAYPAL_SECRET',
