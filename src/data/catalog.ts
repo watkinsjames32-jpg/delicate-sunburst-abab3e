@@ -181,10 +181,20 @@ export const merch: MerchItem[] = [
     sku: 'koi-ware-facetime-tee',
     title: 'FaceTime Tee',
     category: 'T-Shirts',
-    format: 'Unisex cotton tee, front + back print',
+    format: 'Unisex cotton tee, front print',
     description:
-      'Cover art on the front, lyric print across the back. Released alongside the single.',
+      'The FaceTime logo in hot pink and silver glitter across the chest, on a black or white tee. Released alongside the single.',
     priceCents: 3500,
+    photos: [
+      {
+        src: '/img/facetime-tee-black.jpg',
+        alt: 'Black FaceTime Tee with the pink and silver FaceTime logo across the chest',
+      },
+      {
+        src: '/img/facetime-tee-white.jpg',
+        alt: 'White FaceTime Tee with the pink and silver FaceTime logo across the chest',
+      },
+    ],
     sizes: APPAREL_SIZES,
   },
   {
