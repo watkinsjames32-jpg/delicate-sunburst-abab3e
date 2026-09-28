@@ -1,12 +1,18 @@
+<!DOCTYPE html>
 <!-- __forms.html — only for Netlify's build bot form detection -->
-<html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forms</title>
+  </head>
   <body>
     <form name="booking" data-netlify="true" netlify-honeypot="bot-field" hidden>
-      <input type="hidden" name="form-name" value="booking" />
-      <input name="name" />
-      <input name="email" />
+      <input type="hidden" name="form-name" value="booking">
+      <input type="text" name="name">
+      <input type="email" name="email">
       <textarea name="message"></textarea>
-      <input name="bot-field" />
+      <input type="text" name="bot-field">
+      <button type="submit">Send</button>
     </form>
   </body>
 </html>
