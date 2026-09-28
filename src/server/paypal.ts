@@ -91,10 +91,6 @@ function paypalConfigs(): PaypalConfig[] {
   )
 }
 
-function apiBase(): string {
-  return paypalConfigs()[0]?.apiBase ?? 'https://api-m.paypal.com'
-}
-
 export function paypalConfigured(): boolean {
   return paypalConfigs().length > 0
 }
@@ -151,14 +147,14 @@ const failedSignIns = new Map<string, { error: PaypalError; until: number }>()
  * rejected credentials move on to the next pair; any other failure (PayPal
  * down, timeout) is thrown straight away.
  */
-async function accessToken(): Promise<string> {
+async function accessToken(): Promise<{ token: string; config: PaypalConfig }> {
   const configs = paypalConfigs()
   if (configs.length === 0) throw new PaypalError('PayPal is not configured', 503, null)
 
   let rejected: PaypalError | null = null
   for (const config of configs) {
     try {
-      return await signIn(config)
+      return { token: await signIn(config), config }
     } catch (error) {
       if (!(error instanceof PaypalError) || error.issue !== 'INVALID_CREDENTIALS') throw error
       rejected = error
@@ -232,8 +228,8 @@ async function paypalRequest<T>(
   path: string,
   init: { method: 'GET' | 'POST'; body?: unknown; requestId?: string },
 ): Promise<T> {
-  const token = await accessToken()
-  const response = await fetch(`${apiBase()}${path}`, {
+  const { token, config } = await accessToken()
+  const response = await fetch(`${config.apiBase}${path}`, {
     method: init.method,
     headers: {
       Authorization: `Bearer ${token}`,
