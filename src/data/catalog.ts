@@ -39,6 +39,8 @@ export type Product = Storefronts & {
    * the Image CDN. Unset until a clip has been cut from the master.
    */
   preview?: string
+  /** The song's video on YouTube, linked from its cards as "Watch on YouTube". */
+  youtubeUrl?: string
 }
 
 /**
@@ -83,6 +85,7 @@ export const products: Product[] = [
     format: singleFormat('VBR ~180kbps', '4:13'),
     priceCents: SINGLE_PRICE_CENTS,
     preview: '/audio/special-preview.mp3',
+    youtubeUrl: 'https://youtu.be/tqHnRDPOP8g',
   },
 ]
 
