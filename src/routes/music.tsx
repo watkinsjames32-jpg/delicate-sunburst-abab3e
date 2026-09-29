@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { FishSymbol } from 'lucide-react'
 import { useState } from 'react'
+import { getHostedCheckoutLinks } from '../server/hosted-checkout.functions'
 
 import { Footer, Nav, PreviewPlayer, img } from '../components/site'
 import { siteUrl } from './__root'
@@ -17,6 +18,7 @@ import {
 } from '../data/catalog'
 
 export const Route = createFileRoute('/music')({
+  loader: () => getHostedCheckoutLinks(),
   head: () => ({
     meta: [
       { title: 'Shop Music & Merchandise | London Koi' },
@@ -44,68 +46,39 @@ export const Route = createFileRoute('/music')({
   component: MusicStore,
 })
 
-const PAYPAL_BUTTON =
-  'rounded-full bg-[#0070ba] text-white font-semibold hover:bg-[#005ea6] transition-colors shadow-sm disabled:opacity-60'
+const CHECKOUT_BUTTON =
+  'inline-block rounded-full bg-[#0070ba] text-white font-semibold hover:bg-[#005ea6] transition-colors shadow-sm'
 
 /**
- * How to buy one item: always PayPal, started from here. If PayPal can't take
- * the order right now, `/api/paypal/checkout` says why and it shows on the card.
+ * Each item links to its own merchant-created hosted payment page.
  */
 function BuyOptions({
   sku,
+  url,
   variant = 'lg',
-  size,
   needsSize = false,
 }: {
   sku: string
+  url?: string
   variant?: 'lg' | 'sm'
-  /** Chosen size, for items that come in sizes. PayPal checkout uses it. */
-  size?: string
   needsSize?: boolean
 }) {
-  const [starting, setStarting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const sizing = variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'
 
-  const startCheckout = async () => {
-    if (needsSize && !size) {
-      setError('Choose a size to continue.')
-      return
-    }
-
-    setStarting(true)
-    setError(null)
-    try {
-      const response = await fetch('/api/paypal/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sku, size }),
-      })
-      const body = await response.json()
-      if (response.ok && body?.url) {
-        window.location.href = body.url as string
-        return
-      }
-      setError(body?.error ?? 'Could not start checkout. Please try again.')
-    } catch {
-      setError('Could not reach checkout. Please check your connection and try again.')
-    }
-    setStarting(false)
-  }
+  if (!url) return <p className="text-sm text-slate-600">Coming soon — checkout is being set up.</p>
 
   return (
     <div>
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={startCheckout}
-          disabled={starting}
-          className={`${PAYPAL_BUTTON} ${sizing}`}
+        <a
+          href={url}
+          className={`${CHECKOUT_BUTTON} ${sizing}`}
+          aria-label={`Buy ${sku} on secure checkout`}
         >
-          {starting ? 'Taking you to PayPal…' : 'Buy with PayPal'}
-        </button>
+          Buy now
+        </a>
       </div>
-      {error && <p className="text-sm text-red-600 mt-3 max-w-sm">{error}</p>}
+      {needsSize && <p className="text-xs text-slate-500 mt-2">Choose your size on the checkout page.</p>}
     </div>
   )
 }
@@ -133,8 +106,10 @@ function Cover({ product }: { product: Product }) {
 
 function FeaturedRelease({
   product,
+  url,
 }: {
   product: Product
+  url?: string
 }) {
   return (
     <article className="rounded-3xl bg-white border border-sky-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
@@ -157,7 +132,7 @@ function FeaturedRelease({
         <p className="text-2xl font-bold text-slate-900 mb-6">
           {formatPrice(product.priceCents)}
         </p>
-        <BuyOptions sku={product.sku} />
+        <BuyOptions sku={product.sku} url={url} />
       </div>
     </article>
   )
@@ -165,8 +140,10 @@ function FeaturedRelease({
 
 function ReleaseCard({
   product,
+  url,
 }: {
   product: Product
+  url?: string
 }) {
   return (
     <article className="rounded-3xl bg-white border border-sky-200 shadow-sm overflow-hidden flex flex-col">
@@ -183,7 +160,7 @@ function ReleaseCard({
           <p className="text-xl font-bold text-slate-900 mb-4">
             {formatPrice(product.priceCents)}
           </p>
-          <BuyOptions sku={product.sku} variant="sm" />
+          <BuyOptions sku={product.sku} url={url} variant="sm" />
         </div>
       </div>
     </article>
@@ -294,47 +271,7 @@ function MerchTile({ item }: { item: MerchItem }) {
   )
 }
 
-function SizePicker({
-  item,
-  value,
-  onChange,
-}: {
-  item: MerchItem
-  value: string | undefined
-  onChange: (size: string) => void
-}) {
-  if (!item.sizes) {
-    return <p className="text-sm text-slate-500 mb-5">One size</p>
-  }
-
-  return (
-    <fieldset className="mb-5">
-      <legend className="text-xs uppercase tracking-widest text-sky-700 font-semibold mb-2">
-        {item.category === 'Jeans' ? 'Waist' : 'Size'}
-      </legend>
-      <div className="flex flex-wrap gap-2">
-        {item.sizes.map((size) => (
-          <button
-            key={size}
-            type="button"
-            onClick={() => onChange(size)}
-            aria-pressed={value === size}
-            className={`min-w-11 px-3 py-1.5 rounded-full border text-sm font-semibold transition-colors ${
-              value === size
-                ? 'border-slate-900 bg-slate-900 text-white'
-                : 'border-sky-300 bg-white text-slate-700 hover:border-slate-400'
-            }`}
-          >
-            {size}
-          </button>
-        ))}
-      </div>
-    </fieldset>
-  )
-}
-
-function MerchCard({ item }: { item: MerchItem }) {
-  const [size, setSize] = useState<string | undefined>(undefined)
+function MerchCard({ item, url }: { item: MerchItem; url?: string }) {
 
   return (
     <article className="rounded-3xl bg-white border border-sky-200 shadow-sm overflow-hidden flex flex-col">
@@ -348,12 +285,14 @@ function MerchCard({ item }: { item: MerchItem }) {
           <p className="text-sm text-slate-600 leading-relaxed mb-5">{item.description}</p>
         )}
         <div className="mt-auto">
-          <SizePicker item={item} value={size} onChange={setSize} />
+          <p className="text-sm text-slate-500 mb-4">
+            {item.sizes ? `Available sizes: ${item.sizes.join(', ')}` : 'One size'}
+          </p>
           <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
           <BuyOptions
             sku={item.sku}
+            url={url}
             variant="sm"
-            size={size}
             needsSize={Boolean(item.sizes)}
           />
         </div>
@@ -363,7 +302,7 @@ function MerchCard({ item }: { item: MerchItem }) {
 }
 
 /** The Koi Ware line, grouped into the categories that have stock. */
-function KoiWare() {
+function KoiWare({ links }: { links: Record<string, string> }) {
   const sections = merchCategories
     .map((category) => ({ category, items: merch.filter((item) => item.category === category) }))
     .filter((section) => section.items.length > 0)
@@ -392,7 +331,7 @@ function KoiWare() {
           <h3 className="text-2xl font-bold text-slate-900 mb-8">{category}</h3>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              <MerchCard key={item.sku} item={item} />
+              <MerchCard key={item.sku} item={item} url={links[item.sku]} />
             ))}
           </div>
         </section>
@@ -402,6 +341,7 @@ function KoiWare() {
 }
 
 function MusicStore() {
+  const links = Route.useLoaderData()
   const [featured, ...moreSingles] = products
 
   return (
@@ -445,7 +385,7 @@ function MusicStore() {
               Music
             </p>
             {featured && (
-              <FeaturedRelease product={featured} />
+              <FeaturedRelease product={featured} url={links[featured.sku]} />
             )}
 
             {moreSingles.length > 0 && (
@@ -459,6 +399,7 @@ function MusicStore() {
                     <ReleaseCard
                       key={product.sku}
                       product={product}
+                      url={links[product.sku]}
                     />
                   ))}
                 </div>
@@ -477,21 +418,21 @@ function MusicStore() {
             )}
           </div>
 
-          <KoiWare />
+          <KoiWare links={links} />
 
           <div className="mt-24 grid gap-6 sm:grid-cols-3">
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Secure checkout</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Payments are handled by PayPal — pay with your PayPal balance or a card. Card
+                Payments are completed on the linked provider’s secure checkout page. Card
                 details never touch this site.
               </p>
             </div>
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Yours to keep</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Downloads are delivered straight after checkout — play them on any phone,
-                laptop, or car stereo.
+                For music bought on Bandcamp, your download comes from Bandcamp after purchase.
+                Check the product checkout page for delivery details.
               </p>
             </div>
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
