@@ -248,7 +248,7 @@ function Music() {
               href="/music#music"
               className="px-7 py-3 rounded-full bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition-colors shadow-sm"
             >
-              Buy &amp; Download
+              Visit the Store
             </a>
             <span className="text-sm text-slate-500">
               Also on all major streaming platforms

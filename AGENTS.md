@@ -113,7 +113,7 @@ them. Only PayPal orders have an order page here.
 Bandcamp** link (resolved as described under *Connecting Bandcamp*), and there are no PayPal or Shopify
 buttons. Merch cards list their sizes for reference; the buyer picks one on Bandcamp. The page loads
 its links through `getBandcampLinks()` in `src/server/storefront.functions.ts`. The home page's
-"Buy & Download" button goes to `/music`. The PayPal checkout (`/api/paypal/*`, `/order/<token>`,
+"Visit the Store" button goes to `/music`. The PayPal checkout (`/api/paypal/*`, `/order/<token>`,
 `/api/download/<token>`), `storeAvailability()` and the Shopify checkout (`/api/checkout`) are still in
 the code, so earlier PayPal buyers keep their order pages and downloads, but the page no longer uses them.
 
@@ -172,9 +172,11 @@ account other than the payee, is saved as `mismatch` and never delivered; a capt
 #### Connecting Bandcamp
 
 **Current behaviour:** `bandcampUrlFor()` in `bandcamp.ts` returns only the release's `bandcampUrl` from
-`catalog.ts` — the four singles link to `https://londonkoi.bandcamp.com/track/<slug>` (`facetime`,
-`ride-the-wave`, `be-great`, `special`). The environment variables are not read, because some saved
-values have misspelled hosts. Merch has no link, so its cards say "Bandcamp listing coming soon". The
+`catalog.ts`. No release has one yet: the Londonkoi Bandcamp page has no published tracks, so the
+planned `https://londonkoi.bandcamp.com/track/<slug>` links (`facetime`, `ride-the-wave`, `be-great`,
+`special`) returned 404 and were removed. Every card says "Coming soon on Bandcamp" (with no price)
+until a track is published and its `bandcampUrl` is set again. The environment variables are not read, because some saved
+values have misspelled hosts. Merch has no link either. The
 lookup order below is the original design, kept for reference:
 
 Where an item's Bandcamp link comes from, first match wins:
