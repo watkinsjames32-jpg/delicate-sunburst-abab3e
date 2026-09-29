@@ -117,12 +117,12 @@ function About() {
 
 function PastEvents() {
   return (
-    <section id="past-events" className="py-24 px-6 bg-sky-50 text-slate-900 scroll-mt-20">
+    <section id="featured-performances" className="py-24 px-6 bg-sky-50 text-slate-900 scroll-mt-20">
       <div className="max-w-5xl mx-auto">
         <p className="uppercase tracking-[0.3em] text-sky-700 text-sm font-semibold mb-3 text-center">
           Photos &amp; Video
         </p>
-        <h2 className="text-3xl font-bold mb-12 text-center">Past Events</h2>
+        <h2 className="text-3xl font-bold mb-12 text-center">Featured Performances</h2>
         <div className="space-y-10">
           {pastEvents.map((event) => (
             <EventCard key={event.title} event={event} />
@@ -149,7 +149,7 @@ function EventCard({ event }: { event: PastEvent }) {
         {event.media.length > 0 ? (
           <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
             {event.media.map((item) => (
-              <EventMediaTile key={item.src} item={item} />
+              <EventMediaTile key={item.type === 'youtube' ? item.id : item.src} item={item} />
             ))}
           </div>
         ) : (
@@ -166,6 +166,22 @@ function EventCard({ event }: { event: PastEvent }) {
 function EventMediaTile({ item }: { item: EventMedia }) {
   const [failed, setFailed] = useState(false)
   if (failed) return null
+
+  if (item.type === 'youtube') {
+    return (
+      <div className="col-span-2 md:col-span-3 aspect-video rounded-2xl overflow-hidden bg-slate-900">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${item.id}`}
+          title={item.title}
+          loading="lazy"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="aspect-square rounded-2xl overflow-hidden bg-slate-900">
