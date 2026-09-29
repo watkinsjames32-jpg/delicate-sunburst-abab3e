@@ -108,13 +108,13 @@ three storefronts, and every item can be sold on any of them:
 Shopify and Bandcamp don't send the buyer back to this site — their receipt and download come from
 them. Only PayPal orders have an order page here.
 
-**The store page sells through PayPal only**: every release and merch card has a single **Buy with
-PayPal** button, always shown, and there are no Bandcamp or Shopify buttons. If PayPal can't take the
-order (credentials missing or rejected, or a single whose master `<sku>.mp3` isn't in the
-`music-downloads` store yet), `/api/paypal/checkout` returns a reason that is shown on the card and
-logged. The home page's "Buy & Download" button goes to `/music`. `storeAvailability()` in
-`src/server/storefront.ts` and the Shopify checkout (`/api/checkout`) are still in the code but no
-longer used by the page.
+**The store page sells through Bandcamp only**: every release and merch card has a single **Buy on
+Bandcamp** link (resolved as described under *Connecting Bandcamp*), and there are no PayPal or Shopify
+buttons. Merch cards list their sizes for reference; the buyer picks one on Bandcamp. The page loads
+its links through `getBandcampLinks()` in `src/server/storefront.functions.ts`. The home page's
+"Buy & Download" button goes to `/music`. The PayPal checkout (`/api/paypal/*`, `/order/<token>`,
+`/api/download/<token>`), `storeAvailability()` and the Shopify checkout (`/api/checkout`) are still in
+the code, so earlier PayPal buyers keep their order pages and downloads, but the page no longer uses them.
 
 #### Connecting Shopify
 
