@@ -1,11 +1,11 @@
 /**
- * Bandcamp purchase links stay closed until the artist publishes listings and
- * their exact destinations are verified. Existing configured URLs include
- * misspelled hosts and unpublished tracks, so they must not reach buyers.
+ * Bandcamp purchase links. Each single links to its own track page, set as
+ * `bandcampUrl` in `catalog.ts`. The per-item environment variables are not
+ * read: the saved values include misspelled hosts, so they must not reach
+ * buyers. Merch stays closed until its listings are published and verified.
  */
-import { findPurchasable } from '../data/catalog'
+import { findProduct } from '../data/catalog'
 
 export function bandcampUrlFor(sku: string): string | null {
-  if (!findPurchasable(sku)) return null
-  return null
+  return findProduct(sku)?.bandcampUrl ?? null
 }
