@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 
-import { Footer, Nav, PreviewPlayer, img } from '../components/site'
+import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site'
 import { featuredProduct } from '../data/catalog'
 import { pastEvents } from '../data/events'
 import type { EventMedia, PastEvent } from '../data/events'
@@ -226,6 +226,7 @@ function Music() {
             title={featuredProduct.title}
             variant="lg"
           />
+          <YouTubeLink href={featuredProduct.youtubeUrl} title={featuredProduct.title} />
           <div className="flex flex-wrap items-center gap-4">
             <a
               href="/music#music"

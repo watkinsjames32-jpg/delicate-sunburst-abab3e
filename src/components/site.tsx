@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Pause, Play } from 'lucide-react'
+import { Pause, Play, Youtube } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 /** Build a Netlify Image CDN URL so large source images are resized + served as WebP. */
@@ -127,6 +127,29 @@ export function PreviewPlayer({
         onError={() => setFailed(true)}
         aria-label={`${title} 30 second preview`}
       />
+    </div>
+  )
+}
+
+/**
+ * "Watch on YouTube" link for a release's video. Renders nothing when the
+ * release has no `youtubeUrl`, so it can sit on every release card.
+ */
+export function YouTubeLink({ href, title }: { href?: string; title: string }) {
+  if (!href) return null
+
+  return (
+    <div className="mb-5">
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Watch ${title} on YouTube`}
+        className="inline-flex items-center gap-2 rounded-full bg-white border border-sky-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:border-slate-400 transition-colors"
+      >
+        <Youtube className="w-4 h-4 text-red-600" aria-hidden="true" />
+        Watch on YouTube
+      </a>
     </div>
   )
 }

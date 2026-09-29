@@ -235,7 +235,9 @@ the browser refuses it — so a preview can be listed before it is uploaded.
 the home page's New Single section, which features `featuredProduct` from the catalog. So giving a
 release a `preview` is the only step needed to light up its play button everywhere it appears.
 
-`cover`, `description` and `preview` are all optional. A release without artwork renders a titled gradient tile instead, and one without a blurb simply shows title, format, and price — so a new single can go on sale before its artwork or copy exists.
+A release may also name a `youtubeUrl` (Special links its video this way), shown as a "Watch on YouTube" button by `YouTubeLink` in `src/components/site.tsx` on the home page New Single section and the store cards.
+
+`cover`, `description`, `preview` and `youtubeUrl` are all optional. A release without artwork renders a titled gradient tile instead, and one without a blurb simply shows title, format, and price — so a new single can go on sale before its artwork or copy exists.
 
 ### Koi Ware merch
 

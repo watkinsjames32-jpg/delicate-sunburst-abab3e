@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { FishSymbol } from 'lucide-react'
 import { useState } from 'react'
 
-import { Footer, Nav, PreviewPlayer, img } from '../components/site'
+import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site'
 import { siteUrl } from './__root'
 import {
   formatPrice,
@@ -128,6 +128,7 @@ function FeaturedRelease({
           <p className="text-slate-600 leading-relaxed mb-6">{product.description}</p>
         )}
         <PreviewPlayer src={product.preview} title={product.title} variant="lg" />
+        <YouTubeLink href={product.youtubeUrl} title={product.title} />
         {useBandcampUrl(product.sku) && <p className="text-2xl font-bold text-slate-900 mb-6">{formatPrice(product.priceCents)}</p>}
         <BuyOptions sku={product.sku} />
       </div>
@@ -151,6 +152,7 @@ function ReleaseCard({
         </h3>
         <p className="text-sm text-slate-500 mb-5">{product.format}</p>
         <PreviewPlayer src={product.preview} title={product.title} />
+        <YouTubeLink href={product.youtubeUrl} title={product.title} />
         <div className="mt-auto">
           {useBandcampUrl(product.sku) && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(product.priceCents)}</p>}
           <BuyOptions sku={product.sku} variant="sm" />
