@@ -70,6 +70,7 @@ export const products: Product[] = [
     title: 'Ride The Wave',
     format: singleFormat('VBR ~190kbps', '2:53'),
     priceCents: SINGLE_PRICE_CENTS,
+    cover: '/img/ride-the-wave-cover.jpg',
     preview: '/audio/ride-the-wave-preview.mp3',
   },
   {
@@ -77,6 +78,7 @@ export const products: Product[] = [
     title: 'Be Great',
     format: singleFormat('VBR ~190kbps', '4:28'),
     priceCents: SINGLE_PRICE_CENTS,
+    cover: '/img/be-great-cover.jpg',
     preview: '/audio/be-great-preview.mp3',
   },
   {
