@@ -69,3 +69,24 @@ async function paypalSellable(): Promise<Set<string>> {
   }
   return sellable
 }
+
+/**
+ * The outbound storefronts only — Bandcamp and Shopify — for the store page's
+ * buttons. PayPal is left out: its button is always shown and reports its own
+ * problems at checkout, so the page doesn't wait on PayPal and Blobs to render.
+ */
+export async function outboundStorefronts(): Promise<StoreAvailability> {
+  const skus = [...products, ...merch].map((item) => item.sku)
+  const onShopify = await shopifySellable(skus)
+
+  const items: Record<string, ItemAvailability> = {}
+  for (const sku of skus) {
+    items[sku] = {
+      bandcamp: bandcampUrlFor(sku),
+      shopify: onShopify.has(sku),
+      paypal: true,
+    }
+  }
+
+  return { items }
+}

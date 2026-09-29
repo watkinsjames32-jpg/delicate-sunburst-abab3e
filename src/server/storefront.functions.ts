@@ -12,8 +12,13 @@
 
 import { createServerFn } from '@tanstack/react-start'
 
-import { storeAvailability, type StoreAvailability } from './storefront'
+import { outboundStorefronts, storeAvailability, type StoreAvailability } from './storefront'
 
 export const getStoreAvailability = createServerFn().handler(
   async (): Promise<StoreAvailability> => storeAvailability(),
+)
+
+/** Bandcamp links and Shopify availability for the store page's buy buttons. */
+export const getOutboundStorefronts = createServerFn().handler(
+  async (): Promise<StoreAvailability> => outboundStorefronts(),
 )

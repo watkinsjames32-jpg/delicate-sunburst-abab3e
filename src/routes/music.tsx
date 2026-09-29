@@ -8,6 +8,7 @@ import {
   formatPrice,
   merch,
   merchCategories,
+  findPurchasable,
   products,
   upcoming,
   type MerchCategory,
@@ -15,6 +16,8 @@ import {
   type Product,
   type UpcomingRelease,
 } from '../data/catalog'
+import { getOutboundStorefronts } from '../server/storefront.functions'
+import type { StoreAvailability } from '../server/storefront'
 
 export const Route = createFileRoute('/music')({
   head: () => ({
@@ -41,15 +44,39 @@ export const Route = createFileRoute('/music')({
     ],
     links: [{ rel: 'canonical', href: `${siteUrl}/music` }],
   }),
+  loader: async (): Promise<StoreAvailability | null> => {
+    try {
+      return await getOutboundStorefronts()
+    } catch (error) {
+      console.error('Could not load storefront availability', error)
+      return null
+    }
+  },
   component: MusicStore,
 })
 
+/**
+ * Bandcamp link and Shopify availability for one item. If the loader failed,
+ * the catalog's own Bandcamp link is used and Shopify is hidden.
+ */
+function useStorefronts(sku: string): { bandcamp: string | null; shopify: boolean } {
+  const availability = Route.useLoaderData()
+  const item = availability?.items[sku]
+  if (item) return { bandcamp: item.bandcamp, shopify: item.shopify }
+  return { bandcamp: findPurchasable(sku)?.bandcampUrl ?? null, shopify: false }
+}
+
 const PAYPAL_BUTTON =
   'rounded-full bg-[#0070ba] text-white font-semibold hover:bg-[#005ea6] transition-colors shadow-sm disabled:opacity-60'
+const SHOPIFY_BUTTON =
+  'rounded-full bg-[#008060] text-white font-semibold hover:bg-[#006e52] transition-colors shadow-sm disabled:opacity-60'
+const BANDCAMP_BUTTON =
+  'inline-block rounded-full bg-[#1da0c3] text-white font-semibold hover:bg-[#178aa8] transition-colors shadow-sm'
 
 /**
- * How to buy one item: always PayPal, started from here. If PayPal can't take
- * the order right now, `/api/paypal/checkout` says why and it shows on the card.
+ * How to buy one item: always PayPal, plus Shopify when the product is in stock
+ * there and Bandcamp as a plain link. PayPal and Shopify checkouts are started
+ * from here; if one can't take the order, its endpoint says why on the card.
  */
 function BuyOptions({
   sku,
@@ -63,20 +90,22 @@ function BuyOptions({
   size?: string
   needsSize?: boolean
 }) {
-  const [starting, setStarting] = useState(false)
+  const { bandcamp, shopify } = useStorefronts(sku)
+  const [starting, setStarting] = useState<'paypal' | 'shopify' | null>(null)
   const [error, setError] = useState<string | null>(null)
   const sizing = variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'
 
-  const startCheckout = async () => {
+  const startCheckout = async (via: 'paypal' | 'shopify') => {
     if (needsSize && !size) {
       setError('Choose a size to continue.')
       return
     }
 
-    setStarting(true)
+    setStarting(via)
     setError(null)
     try {
-      const response = await fetch('/api/paypal/checkout', {
+      const endpoint = via === 'paypal' ? '/api/paypal/checkout' : '/api/checkout'
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sku, size }),
@@ -90,7 +119,7 @@ function BuyOptions({
     } catch {
       setError('Could not reach checkout. Please check your connection and try again.')
     }
-    setStarting(false)
+    setStarting(null)
   }
 
   return (
@@ -98,12 +127,32 @@ function BuyOptions({
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
-          onClick={startCheckout}
-          disabled={starting}
+          onClick={() => startCheckout('paypal')}
+          disabled={starting !== null}
           className={`${PAYPAL_BUTTON} ${sizing}`}
         >
-          {starting ? 'Taking you to PayPal…' : 'Buy with PayPal'}
+          {starting === 'paypal' ? 'Taking you to PayPal…' : 'Buy with PayPal'}
         </button>
+        {shopify && (
+          <button
+            type="button"
+            onClick={() => startCheckout('shopify')}
+            disabled={starting !== null}
+            className={`${SHOPIFY_BUTTON} ${sizing}`}
+          >
+            {starting === 'shopify' ? 'Taking you to Shopify…' : 'Buy on Shopify'}
+          </button>
+        )}
+        {bandcamp && (
+          <a
+            href={bandcamp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${BANDCAMP_BUTTON} ${sizing}`}
+          >
+            Buy on Bandcamp
+          </a>
+        )}
       </div>
       {error && <p className="text-sm text-red-600 mt-3 max-w-sm">{error}</p>}
     </div>
@@ -483,8 +532,8 @@ function MusicStore() {
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Secure checkout</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Payments are handled by PayPal — pay with your PayPal balance or a card. Card
-                details never touch this site.
+                Pay with PayPal, or buy through Bandcamp or Shopify where offered — card details
+                are handled by them and never touch this site.
               </p>
             </div>
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
