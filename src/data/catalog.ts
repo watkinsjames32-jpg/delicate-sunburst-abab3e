@@ -62,7 +62,6 @@ export const products: Product[] = [
     priceCents: SINGLE_PRICE_CENTS,
     cover: '/img/facetime-new-hot-single.jpg',
     preview: '/audio/facetime-preview.mp3',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/facetime',
   },
   {
     sku: 'ride-the-wave',
@@ -70,7 +69,6 @@ export const products: Product[] = [
     format: singleFormat('VBR ~190kbps', '2:53'),
     priceCents: SINGLE_PRICE_CENTS,
     preview: '/audio/ride-the-wave-preview.mp3',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/ride-the-wave',
   },
   {
     sku: 'be-great',
@@ -78,7 +76,6 @@ export const products: Product[] = [
     format: singleFormat('VBR ~190kbps', '4:28'),
     priceCents: SINGLE_PRICE_CENTS,
     preview: '/audio/be-great-preview.mp3',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/be-great',
   },
   {
     sku: 'special',
@@ -86,7 +83,6 @@ export const products: Product[] = [
     format: singleFormat('VBR ~180kbps', '4:13'),
     priceCents: SINGLE_PRICE_CENTS,
     preview: '/audio/special-preview.mp3',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/special',
   },
 ]
 

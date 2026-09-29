@@ -70,7 +70,7 @@ const BANDCAMP_BUTTON =
 function BuyOptions({ sku, variant = 'lg' }: { sku: string; variant?: 'lg' | 'sm' }) {
   const bandcamp = useBandcampUrl(sku)
   const sizing = variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'
-  if (!bandcamp) return null
+  if (!bandcamp) return <span className="text-sm font-semibold text-slate-600">Bandcamp listing coming soon</span>
 
   return (
     <a
@@ -128,9 +128,7 @@ function FeaturedRelease({
           <p className="text-slate-600 leading-relaxed mb-6">{product.description}</p>
         )}
         <PreviewPlayer src={product.preview} title={product.title} variant="lg" />
-        <p className="text-2xl font-bold text-slate-900 mb-6">
-          {formatPrice(product.priceCents)}
-        </p>
+        {useBandcampUrl(product.sku) && <p className="text-2xl font-bold text-slate-900 mb-6">{formatPrice(product.priceCents)}</p>}
         <BuyOptions sku={product.sku} />
       </div>
     </article>
@@ -154,9 +152,7 @@ function ReleaseCard({
         <p className="text-sm text-slate-500 mb-5">{product.format}</p>
         <PreviewPlayer src={product.preview} title={product.title} />
         <div className="mt-auto">
-          <p className="text-xl font-bold text-slate-900 mb-4">
-            {formatPrice(product.priceCents)}
-          </p>
+          {useBandcampUrl(product.sku) && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(product.priceCents)}</p>}
           <BuyOptions sku={product.sku} variant="sm" />
         </div>
       </div>
@@ -308,7 +304,7 @@ function MerchCard({ item }: { item: MerchItem }) {
         )}
         <div className="mt-auto">
           <SizeList item={item} />
-          <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
+          {useBandcampUrl(item.sku) && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>}
           <BuyOptions sku={item.sku} variant="sm" />
         </div>
       </div>
@@ -371,9 +367,8 @@ function MusicStore() {
             Shop Music &amp; Merchandise
           </h1>
           <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
-            Buy London&rsquo;s singles and her Koi Ware clothing line straight from the artist.
-            Downloads are yours to keep, merch ships to your door, and every order supports a
-            young singer&rsquo;s studio time directly.
+            Explore London&rsquo;s singles and Koi Ware. Purchase links will appear as each item
+            is published on Bandcamp.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
             <a
@@ -406,7 +401,7 @@ function MusicStore() {
               <div className="mt-16">
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">More singles</h2>
                 <p className="text-slate-600 mb-8">
-                  Hit play for a 30-second taster, then buy the full-length download.
+                  Hit play for a 30-second preview. Full downloads will be available on Bandcamp.
                 </p>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {moreSingles.map((product) => (
@@ -437,7 +432,7 @@ function MusicStore() {
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Secure checkout</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Every order is paid for on Bandcamp — card details are handled by Bandcamp and
+                When an item is available, its purchase link takes you to Bandcamp. Card details
                 never touch this site.
               </p>
             </div>

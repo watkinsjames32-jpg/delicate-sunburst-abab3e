@@ -13,19 +13,14 @@
  *      `BANDCAMP_URL_RIDE_THE_WAVE`, `BANDCAMP_RIDE_THE_WAVE_URL` or (for
  *      FaceTime, whose SKU is `facetime-single`) `BANDCAMP_FACETIME_URL` works.
  *   2. `bandcampUrl` on the item in `catalog.ts`
- *   3. `BANDCAMP_URL`, the artist's Bandcamp page, or `ARTIST_BANDCAMP_URL`
- *      when that is unset. Releases link to the page itself and merch to its
- *      `/merch` section, so every item always has somewhere to be bought — at
- *      the cost of the buyer finding the item there.
+ * Do not use an artist-page fallback as a purchase link: a product needs its
+ * own published listing before the site offers a Buy button.
  *
  * Server-only: it reads `process.env`. Never import it from a component.
  */
 
 import { findPurchasable } from '../data/catalog'
 import { readEnv } from './env'
-
-/** London's own Bandcamp page, used when `BANDCAMP_URL` is not set. */
-const ARTIST_BANDCAMP_URL = 'https://londonkoi.bandcamp.com'
 
 /**
  * A usable link is an absolute `https` URL. Anything else — a placeholder, a
@@ -82,7 +77,5 @@ export function bandcampUrlFor(sku: string): string | null {
   const own = itemEnvUrl(item.sku, item.title) ?? asHttpsUrl(item.bandcampUrl)
   if (own) return own.toString()
 
-  const artist = asHttpsUrl(readEnv('BANDCAMP_URL')) ?? new URL(ARTIST_BANDCAMP_URL)
-  if (item.kind === 'merch') artist.pathname = '/merch'
-  return artist.toString()
+  return null
 }
