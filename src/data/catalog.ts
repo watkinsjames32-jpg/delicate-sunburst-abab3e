@@ -54,10 +54,15 @@ function singleFormat(quality: string, runtime: string) {
 
 const SINGLE_PRICE_CENTS = 99
 
+/*
+ * No release has a `bandcampUrl` yet: the Londonkoi Bandcamp page has no
+ * published tracks, so `https://londonkoi.bandcamp.com/track/<slug>` links
+ * (facetime, ride-the-wave, be-great, special) are 404s. Cards show
+ * "Coming soon on Bandcamp" until each track is live and its URL is set here.
+ */
 export const products: Product[] = [
   {
     sku: 'facetime-single',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/facetime',
     title: 'FaceTime',
     format: singleFormat('320kbps', '2:38'),
     description:
@@ -68,7 +73,6 @@ export const products: Product[] = [
   },
   {
     sku: 'ride-the-wave',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/ride-the-wave',
     title: 'Ride The Wave',
     format: singleFormat('VBR ~190kbps', '2:53'),
     priceCents: SINGLE_PRICE_CENTS,
@@ -77,7 +81,6 @@ export const products: Product[] = [
   },
   {
     sku: 'be-great',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/be-great',
     title: 'Be Great',
     format: singleFormat('VBR ~190kbps', '4:28'),
     priceCents: SINGLE_PRICE_CENTS,
@@ -86,7 +89,6 @@ export const products: Product[] = [
   },
   {
     sku: 'special',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/special',
     title: 'Special',
     format: singleFormat('VBR ~180kbps', '4:13'),
     priceCents: SINGLE_PRICE_CENTS,

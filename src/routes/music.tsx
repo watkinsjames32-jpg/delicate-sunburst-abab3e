@@ -70,7 +70,7 @@ const BANDCAMP_BUTTON =
 function BuyOptions({ sku, variant = 'lg' }: { sku: string; variant?: 'lg' | 'sm' }) {
   const bandcamp = useBandcampUrl(sku)
   const sizing = variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'
-  if (!bandcamp) return <span className="text-sm font-semibold text-slate-600">Bandcamp listing coming soon</span>
+  if (!bandcamp) return <span className="text-sm font-semibold text-slate-600">Coming soon on Bandcamp</span>
 
   return (
     <a
@@ -369,8 +369,8 @@ function MusicStore() {
             Shop Music &amp; Merchandise
           </h1>
           <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
-            Explore London&rsquo;s singles and Koi Ware. Singles are sold on Bandcamp, and merch
-            purchase links will appear as each item is published there.
+            Explore London&rsquo;s singles and Koi Ware. Singles and merch are coming soon to
+            Bandcamp — purchase links will appear as each item is published there.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
             <a
@@ -403,7 +403,7 @@ function MusicStore() {
               <div className="mt-16">
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">More singles</h2>
                 <p className="text-slate-600 mb-8">
-                  Hit play for a 30-second preview. Buy the full download on Bandcamp.
+                  Hit play for a 30-second preview. Downloads are coming soon on Bandcamp.
                 </p>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {moreSingles.map((product) => (
