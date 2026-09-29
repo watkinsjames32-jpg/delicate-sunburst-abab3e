@@ -84,6 +84,7 @@ export const products: Product[] = [
     title: 'Special',
     format: singleFormat('VBR ~180kbps', '4:13'),
     priceCents: SINGLE_PRICE_CENTS,
+    cover: '/img/special-cover.png',
     preview: '/audio/special-preview.mp3',
     youtubeUrl: 'https://youtu.be/tqHnRDPOP8g',
   },
