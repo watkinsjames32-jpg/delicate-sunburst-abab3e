@@ -16,8 +16,7 @@ import {
   type Product,
   type UpcomingRelease,
 } from '../data/catalog'
-import { getOutboundStorefronts } from '../server/storefront.functions'
-import type { StoreAvailability } from '../server/storefront'
+import { getBandcampLinks } from '../server/storefront.functions'
 
 export const Route = createFileRoute('/music')({
   head: () => ({
@@ -44,118 +43,44 @@ export const Route = createFileRoute('/music')({
     ],
     links: [{ rel: 'canonical', href: `${siteUrl}/music` }],
   }),
-  loader: async (): Promise<StoreAvailability | null> => {
+  loader: async (): Promise<Record<string, string | null> | null> => {
     try {
-      return await getOutboundStorefronts()
+      return await getBandcampLinks()
     } catch (error) {
-      console.error('Could not load storefront availability', error)
+      console.error('Could not load Bandcamp links', error)
       return null
     }
   },
   component: MusicStore,
 })
 
-/**
- * Bandcamp link and Shopify availability for one item. If the loader failed,
- * the catalog's own Bandcamp link is used and Shopify is hidden.
- */
-function useStorefronts(sku: string): { bandcamp: string | null; shopify: boolean } {
-  const availability = Route.useLoaderData()
-  const item = availability?.items[sku]
-  if (item) return { bandcamp: item.bandcamp, shopify: item.shopify }
-  return { bandcamp: findPurchasable(sku)?.bandcampUrl ?? null, shopify: false }
+/** An item's Bandcamp link. If the loader failed, the catalog's own link is used. */
+function useBandcampUrl(sku: string): string | null {
+  const links = Route.useLoaderData()
+  return links?.[sku] ?? findPurchasable(sku)?.bandcampUrl ?? null
 }
 
-const PAYPAL_BUTTON =
-  'rounded-full bg-[#0070ba] text-white font-semibold hover:bg-[#005ea6] transition-colors shadow-sm disabled:opacity-60'
-const SHOPIFY_BUTTON =
-  'rounded-full bg-[#008060] text-white font-semibold hover:bg-[#006e52] transition-colors shadow-sm disabled:opacity-60'
 const BANDCAMP_BUTTON =
   'inline-block rounded-full bg-[#1da0c3] text-white font-semibold hover:bg-[#178aa8] transition-colors shadow-sm'
 
 /**
- * How to buy one item: always PayPal, plus Shopify when the product is in stock
- * there and Bandcamp as a plain link. PayPal and Shopify checkouts are started
- * from here; if one can't take the order, its endpoint says why on the card.
+ * How to buy one item: a link to it on Bandcamp, which takes the payment,
+ * delivers the download or ships the merch, and sends the receipt itself.
  */
-function BuyOptions({
-  sku,
-  variant = 'lg',
-  size,
-  needsSize = false,
-}: {
-  sku: string
-  variant?: 'lg' | 'sm'
-  /** Chosen size, for items that come in sizes. PayPal checkout uses it. */
-  size?: string
-  needsSize?: boolean
-}) {
-  const { bandcamp, shopify } = useStorefronts(sku)
-  const [starting, setStarting] = useState<'paypal' | 'shopify' | null>(null)
-  const [error, setError] = useState<string | null>(null)
+function BuyOptions({ sku, variant = 'lg' }: { sku: string; variant?: 'lg' | 'sm' }) {
+  const bandcamp = useBandcampUrl(sku)
   const sizing = variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'
-
-  const startCheckout = async (via: 'paypal' | 'shopify') => {
-    if (needsSize && !size) {
-      setError('Choose a size to continue.')
-      return
-    }
-
-    setStarting(via)
-    setError(null)
-    try {
-      const endpoint = via === 'paypal' ? '/api/paypal/checkout' : '/api/checkout'
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sku, size }),
-      })
-      const body = await response.json()
-      if (response.ok && body?.url) {
-        window.location.href = body.url as string
-        return
-      }
-      setError(body?.error ?? 'Could not start checkout. Please try again.')
-    } catch {
-      setError('Could not reach checkout. Please check your connection and try again.')
-    }
-    setStarting(null)
-  }
+  if (!bandcamp) return null
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => startCheckout('paypal')}
-          disabled={starting !== null}
-          className={`${PAYPAL_BUTTON} ${sizing}`}
-        >
-          {starting === 'paypal' ? 'Taking you to PayPal…' : 'Buy with PayPal'}
-        </button>
-        {shopify && (
-          <button
-            type="button"
-            onClick={() => startCheckout('shopify')}
-            disabled={starting !== null}
-            className={`${SHOPIFY_BUTTON} ${sizing}`}
-          >
-            {starting === 'shopify' ? 'Taking you to Shopify…' : 'Buy on Shopify'}
-          </button>
-        )}
-        {bandcamp && (
-          <a
-            href={bandcamp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${BANDCAMP_BUTTON} ${sizing}`}
-          >
-            Buy on Bandcamp
-          </a>
-        )}
-      </div>
-      {error && <p className="text-sm text-red-600 mt-3 max-w-sm">{error}</p>}
-    </div>
+    <a
+      href={bandcamp}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${BANDCAMP_BUTTON} ${sizing}`}
+    >
+      Buy on Bandcamp
+    </a>
   )
 }
 
@@ -343,48 +268,33 @@ function MerchTile({ item }: { item: MerchItem }) {
   )
 }
 
-function SizePicker({
-  item,
-  value,
-  onChange,
-}: {
-  item: MerchItem
-  value: string | undefined
-  onChange: (size: string) => void
-}) {
+/** The sizes an item comes in, for reference — the buyer picks one on Bandcamp. */
+function SizeList({ item }: { item: MerchItem }) {
   if (!item.sizes) {
     return <p className="text-sm text-slate-500 mb-5">One size</p>
   }
 
   return (
-    <fieldset className="mb-5">
-      <legend className="text-xs uppercase tracking-widest text-sky-700 font-semibold mb-2">
-        {item.category === 'Jeans' ? 'Waist' : 'Size'}
-      </legend>
-      <div className="flex flex-wrap gap-2">
+    <div className="mb-5">
+      <p className="text-xs uppercase tracking-widest text-sky-700 font-semibold mb-2">
+        {item.category === 'Jeans' ? 'Waist sizes' : 'Sizes'}
+      </p>
+      <ul className="flex flex-wrap gap-2">
         {item.sizes.map((size) => (
-          <button
+          <li
             key={size}
-            type="button"
-            onClick={() => onChange(size)}
-            aria-pressed={value === size}
-            className={`min-w-11 px-3 py-1.5 rounded-full border text-sm font-semibold transition-colors ${
-              value === size
-                ? 'border-slate-900 bg-slate-900 text-white'
-                : 'border-sky-300 bg-white text-slate-700 hover:border-slate-400'
-            }`}
+            className="min-w-11 px-3 py-1.5 rounded-full border border-sky-300 bg-white text-center text-sm font-semibold text-slate-700"
           >
             {size}
-          </button>
+          </li>
         ))}
-      </div>
-    </fieldset>
+      </ul>
+      <p className="text-xs text-slate-500 mt-2">Choose your size on Bandcamp.</p>
+    </div>
   )
 }
 
 function MerchCard({ item }: { item: MerchItem }) {
-  const [size, setSize] = useState<string | undefined>(undefined)
-
   return (
     <article className="rounded-3xl bg-white border border-sky-200 shadow-sm overflow-hidden flex flex-col">
       <div className="aspect-square">
@@ -397,14 +307,9 @@ function MerchCard({ item }: { item: MerchItem }) {
           <p className="text-sm text-slate-600 leading-relaxed mb-5">{item.description}</p>
         )}
         <div className="mt-auto">
-          <SizePicker item={item} value={size} onChange={setSize} />
+          <SizeList item={item} />
           <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
-          <BuyOptions
-            sku={item.sku}
-            variant="sm"
-            size={size}
-            needsSize={Boolean(item.sizes)}
-          />
+          <BuyOptions sku={item.sku} variant="sm" />
         </div>
       </div>
     </article>
@@ -532,14 +437,14 @@ function MusicStore() {
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Secure checkout</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Pay with PayPal, or buy through Bandcamp or Shopify where offered — card details
-                are handled by them and never touch this site.
+                Every order is paid for on Bandcamp — card details are handled by Bandcamp and
+                never touch this site.
               </p>
             </div>
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Yours to keep</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Downloads are delivered straight after checkout — play them on any phone,
+                Bandcamp delivers your download straight after checkout — play it on any phone,
                 laptop, or car stereo.
               </p>
             </div>

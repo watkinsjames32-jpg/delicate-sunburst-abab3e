@@ -90,3 +90,10 @@ export async function outboundStorefronts(): Promise<StoreAvailability> {
 
   return { items }
 }
+
+/** Bandcamp links only, per SKU — all the store page's buy buttons need. */
+export function bandcampLinks(): Record<string, string | null> {
+  const links: Record<string, string | null> = {}
+  for (const item of [...products, ...merch]) links[item.sku] = bandcampUrlFor(item.sku)
+  return links
+}
