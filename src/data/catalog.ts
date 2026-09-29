@@ -57,12 +57,12 @@ const SINGLE_PRICE_CENTS = 99
 export const products: Product[] = [
   {
     sku: 'facetime-single',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/facetime',
+    bandcampUrl: 'https://londonkoimusic.bandcamp.com/track/facetime',
     title: 'FaceTime',
     format: singleFormat('320kbps', '2:38'),
     description:
       "London's latest single, showing off both the big belting moments and the softer, more personal side of her voice. Yours to keep and play anywhere, with no subscription needed.",
-    priceCents: SINGLE_PRICE_CENTS,
+    priceCents: 150,
     cover: '/img/facetime-new-hot-single.jpg',
     preview: '/audio/facetime-preview.mp3',
   },
