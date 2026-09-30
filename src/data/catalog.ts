@@ -6,8 +6,8 @@
  * item can be opened for sale without a code change; see `src/server/bandcamp.ts`
  * and `src/server/shopify.ts`. Shopify and Bandcamp charge their own price and
  * run their own delivery, so `priceCents` has to be kept in step with both by
- * hand. PayPal (`src/server/paypal.ts`) needs no field here: it is available to
- * every item and charges `priceCents` itself.
+ * hand. PayPal (`src/server/paypal.ts`) can sell every item and charges
+ * `priceCents` itself; `sellOnPaypal` puts its button on the store page.
  */
 type Storefronts = {
   /**
@@ -21,6 +21,11 @@ type Storefronts = {
    * with the SKU as its handle needs no entry here at all.
    */
   shopifyHandle?: string
+  /**
+   * Show a "Pay with PayPal" button on the store page. This site takes the
+   * order and records it in `paypal_orders` for packing.
+   */
+  sellOnPaypal?: boolean
 }
 
 export type Product = Storefronts & {
@@ -157,6 +162,8 @@ export type MerchItem = Storefronts & {
    * variant options (e.g. a "Size" option of "XL").
    */
   sizes?: string[]
+  /** Colourways the buyer picks from at PayPal checkout, e.g. black or white. */
+  colours?: string[]
 }
 
 const APPAREL_SIZES = ['S', 'M', 'L', 'XL', '2XL', '3XL']
@@ -182,6 +189,7 @@ export const merch: MerchItem[] = [
       },
     ],
     sizes: APPAREL_SIZES,
+    bandcampUrl: 'https://londonkoimusic.bandcamp.com/merch/koi-ware-logo-tee',
   },
   {
     sku: 'koi-ware-facetime-tee',
@@ -202,6 +210,9 @@ export const merch: MerchItem[] = [
       },
     ],
     sizes: APPAREL_SIZES,
+    colours: ['Black', 'White'],
+    // No listing of its own on Bandcamp yet, so this opens the merch page.
+    bandcampUrl: 'https://londonkoimusic.bandcamp.com/merch',
   },
   {
     sku: 'koi-ware-hoodie',
@@ -274,6 +285,8 @@ export type Purchasable = Storefronts & {
   priceCents: number
   /** Present when the buyer must choose a size before checking out. */
   sizes?: string[]
+  /** Present when the buyer must also choose a colour. */
+  colours?: string[]
 }
 
 export function findPurchasable(sku: string): Purchasable | undefined {
@@ -301,6 +314,7 @@ export function findPurchasable(sku: string): Purchasable | undefined {
       description: item.description,
       priceCents: item.priceCents,
       sizes: item.sizes,
+      colours: item.colours,
       bandcampUrl: item.bandcampUrl,
       shopifyHandle: item.shopifyHandle,
     }
