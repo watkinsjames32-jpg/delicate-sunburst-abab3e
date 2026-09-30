@@ -47,10 +47,14 @@ export const pastEvents: PastEvent[] = [
     ],
   },
   {
-    title: 'Caesars Superdome',
-    location: 'New Orleans, Louisiana',
-    description:
-      'Sang the national anthem before a New Orleans Saints game in front of roughly 80,000 fans.',
-    media: [],
+    title: 'In the Studio',
+    description: 'Behind the scenes in the vocal booth during a recording session.',
+    media: [
+      {
+        type: 'photo',
+        src: '/img/events/studio-recording-session.jpg',
+        alt: 'London Koi in headphones in a purple vocal booth, seated beside the studio microphone during a recording session',
+      },
+    ],
   },
 ]
