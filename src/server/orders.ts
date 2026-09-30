@@ -11,7 +11,7 @@ import { eq, sql } from 'drizzle-orm'
 import { db } from '../../db/index'
 import { paypalOrders, type PaypalOrder } from '../../db/schema'
 import type { Purchasable } from '../data/catalog'
-import { paidToPayee, type CapturedPayment, type NewPaypalOrder } from './paypal'
+import { capturePaypalOrder, inspectPaypalOrder, paidToPayee, type CapturedPayment, type NewPaypalOrder } from './paypal'
 
 /** How many times one purchase can be downloaded, so a link can't be passed around forever. */
 export const MAX_DOWNLOADS = 10
@@ -86,7 +86,7 @@ export async function recordCapture(
       shippingAddress: payment.shippingAddress,
       completedAt: status === 'completed' ? new Date() : null,
     })
-    .where(eq(paypalOrders.id, order.id))
+    .where(sql`${paypalOrders.id} = ${order.id} and ${paypalOrders.status} <> 'completed'`)
 
   return status
 }
@@ -101,4 +101,20 @@ export async function claimDownload(order: PaypalOrder): Promise<boolean> {
     )
     .returning({ id: paypalOrders.id })
   return updated.length > 0
+}
+
+/** Recover interrupted confirmations and recheck clearing payments on the receipt page. */
+export async function reconcileOrder(order: PaypalOrder): Promise<PaypalOrder> {
+  if (!['created', 'pending'].includes(order.status)) return order
+  try {
+    const current = await inspectPaypalOrder(order.paypalOrderId)
+    const payment = current.status === 'APPROVED' && order.status === 'created'
+      ? await capturePaypalOrder(order.paypalOrderId)
+      : current.payment
+    if (payment.captureId) await recordCapture(order, payment)
+    return await findByPaypalId(order.paypalOrderId) ?? order
+  } catch (error) {
+    console.error('Could not reconcile PayPal payment', { paypalOrderId: order.paypalOrderId }, error)
+    return order
+  }
 }

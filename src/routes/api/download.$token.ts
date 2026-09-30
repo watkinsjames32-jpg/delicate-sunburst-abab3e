@@ -13,24 +13,19 @@ export const Route = createFileRoute('/api/download/$token')({
   server: {
     handlers: {
       GET: async ({ params }) => {
+        if (!/^[a-f0-9]{64}$/.test(params.token)) return new Response('Download not found.', { status: 404 })
         const order = await findByAccessToken(params.token)
         if (!order || order.kind !== 'music' || order.status !== 'completed') {
           return new Response('Download not found.', { status: 404 })
         }
 
-        if (!(await claimDownload(order))) {
-          return new Response(
-            'This download link has been used the maximum number of times. Please get in touch if you need another copy.',
-            { status: 410 },
-          )
-        }
-
         const stream = await masterStream(order.sku)
         if (!stream) {
-          console.error('Download master missing for a paid order', { sku: order.sku })
-          return new Response('Download temporarily unavailable. Please try again later.', {
-            status: 503,
-          })
+          return new Response('Download temporarily unavailable. Please try again later.', { status: 503 })
+        }
+        if (!(await claimDownload(order))) {
+          await stream.cancel()
+          return new Response('This download link has been used the maximum number of times. Please get in touch if you need another copy.', { status: 410 })
         }
 
         const title = findProduct(order.sku)?.title ?? order.title

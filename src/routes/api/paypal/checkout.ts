@@ -18,6 +18,9 @@ export const Route = createFileRoute('/api/paypal/checkout')({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        if (request.headers.get('origin') && request.headers.get('origin') !== new URL(request.url).origin) {
+          return Response.json({ error: 'Invalid checkout origin.' }, { status: 403 })
+        }
         let sku: unknown
         let size: unknown
         let colour: unknown
@@ -75,7 +78,7 @@ export const Route = createFileRoute('/api/paypal/checkout')({
           })
           await recordCreatedOrder(product, chosenSize, order, accessToken)
 
-          return Response.json({ url: order.approveUrl })
+          return Response.json({ url: order.approveUrl }, { headers: { 'Cache-Control': 'no-store' } })
         } catch (error) {
           console.error('PayPal checkout failed', error)
           if (error instanceof PaypalError && error.issue === 'INVALID_CREDENTIALS') {

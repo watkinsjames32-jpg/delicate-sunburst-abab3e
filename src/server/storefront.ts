@@ -97,3 +97,11 @@ export function bandcampLinks(): Record<string, string | null> {
   for (const item of [...products, ...merch]) links[item.sku] = bandcampUrlFor(item.sku)
   return links
 }
+
+/** PayPal readiness and public Bandcamp links; no credentials leave the server. */
+export async function paypalStorefront(): Promise<StoreAvailability> {
+  const enabled = await paypalSellable()
+  return { items: Object.fromEntries([...products, ...merch].map(item => [item.sku, {
+    bandcamp: bandcampUrlFor(item.sku), shopify: false, paypal: enabled.has(item.sku),
+  }])) }
+}

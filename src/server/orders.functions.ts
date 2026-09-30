@@ -6,7 +6,7 @@
 
 import { createServerFn } from '@tanstack/react-start'
 
-import { findByAccessToken, MAX_DOWNLOADS } from './orders'
+import { findByAccessToken, reconcileOrder, MAX_DOWNLOADS } from './orders'
 
 export type OrderSummary = {
   status: 'created' | 'completed' | 'pending' | 'failed' | 'mismatch'
@@ -24,8 +24,9 @@ export const getOrderSummary = createServerFn({ method: 'GET' })
     return token
   })
   .handler(async ({ data: token }): Promise<OrderSummary | null> => {
-    const order = await findByAccessToken(token)
+    let order = await findByAccessToken(token)
     if (!order) return null
+    order = await reconcileOrder(order)
 
     return {
       status: order.status as OrderSummary['status'],

@@ -86,6 +86,7 @@ function clientIds(): string[] {
  */
 function paypalConfigs(): PaypalConfig[] {
   const mode = (readEnv('PAYPAL_ENV') ?? readEnv('PAYPAL_MODE') ?? 'live').toLowerCase()
+  if (!['live', 'sandbox'].includes(mode)) throw new PaypalError('Invalid PayPal environment', 503, 'INVALID_MODE')
   const apiBase = mode === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com'
   const secrets = presentValues(CLIENT_SECRET_NAMES)
 
@@ -217,8 +218,8 @@ async function signIn(config: PaypalConfig): Promise<string> {
  * of failing at checkout. Uses the cached token, so it rarely calls PayPal.
  */
 export async function paypalReady(): Promise<boolean> {
-  if (!paypalConfigured()) return false
   try {
+    if (!paypalConfigured()) return false
     await accessToken()
     return true
   } catch (error) {
@@ -323,8 +324,8 @@ export async function createPaypalOrder(
     },
   })
 
-  const approveUrl = order.links?.find((link) => link.rel === 'payer-action')?.href
-  if (!approveUrl) throw new PaypalError('PayPal returned no approval link', 502, null)
+  const approveUrl = order.links?.find((link) => ['payer-action', 'approve'].includes(link.rel))?.href
+  if (!approveUrl || !order.id || !isPaypalApprovalUrl(approveUrl)) throw new PaypalError('PayPal returned no approval link', 502, null)
 
   return { paypalOrderId: order.id, approveUrl, itemCents, shippingCents, totalCents }
 }
@@ -401,4 +402,19 @@ export async function capturePaypalOrder(paypalOrderId: string): Promise<Capture
     }
     throw error
   }
+}
+
+/** Only redirect buyers to PayPal's own approval pages. */
+export function isPaypalApprovalUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' && !url.username && !url.password &&
+      ['www.paypal.com', 'www.sandbox.paypal.com'].includes(url.hostname)
+  } catch { return false }
+}
+
+/** Read payment state without attempting another charge. */
+export async function inspectPaypalOrder(paypalOrderId: string): Promise<{ status: string; payment: CapturedPayment }> {
+  const order = await paypalRequest<OrderDetails>(`/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}`, { method: 'GET' })
+  return { status: order.status, payment: summarise(order) }
 }
