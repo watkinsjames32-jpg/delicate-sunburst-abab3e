@@ -109,17 +109,9 @@ three storefronts, and every item can be sold on any of them:
 Shopify and Bandcamp don't send the buyer back to this site — their receipt and download come from
 them. Only PayPal orders have an order page here.
 
-**The store page sells through Bandcamp only**: every release and merch card has a single **Buy on
-Bandcamp** link (resolved as described under *Connecting Bandcamp*), and there are no PayPal or Shopify
-buttons. Merch cards list their sizes for reference; the buyer picks one on Bandcamp. The page loads
-its links through `getBandcampLinks()` in `src/server/storefront.functions.ts`. The home page's
-"Buy & Download" button goes to `/music`. The PayPal checkout (`/api/paypal/*`, `/order/<token>`,
-`/api/download/<token>`), `storeAvailability()` and the Shopify checkout (`/api/checkout`) are still in
-the code, so earlier PayPal buyers keep their order pages and downloads. A merch item with
-`sellOnPaypal: true` in `catalog.ts` (none at the moment) gets size and colour pickers and a **Pay
-with PayPal** button instead. A `colours`
-list on an item is required at PayPal checkout and saved with the size as e.g. `M, Black`; when it
-lines up with `photos`, picking a colour shows its photo.
+The store page offers PayPal for merchandise and singles whose private MP3 masters are uploaded, once PayPal accepts the configured credentials. Existing Bandcamp links remain available. The page loads public availability through `getPaypalStorefront()`; credentials never leave the server. Merch cards collect size and colour before starting checkout. Shipping addresses are collected on PayPal. The receipt page rechecks pending payments and recovers interrupted confirmation, without marking an unverified payment completed. Repeated captures use a stable PayPal request ID. Download counts are consumed only after the master exists.
+
+Run `node --test tests/paypal.test.mjs` for mocked REST checks (no real charges).
 
 #### Connecting Shopify
 

@@ -14,6 +14,7 @@ import { createServerFn } from '@tanstack/react-start'
 
 import {
   bandcampLinks,
+  paypalStorefront,
   outboundStorefronts,
   storeAvailability,
   type StoreAvailability,
@@ -32,3 +33,5 @@ export const getOutboundStorefronts = createServerFn().handler(
 export const getBandcampLinks = createServerFn().handler(
   async (): Promise<Record<string, string | null>> => bandcampLinks(),
 )
+
+export const getPaypalStorefront = createServerFn().handler(async (): Promise<StoreAvailability> => paypalStorefront())

@@ -17,7 +17,7 @@ export const Route = createFileRoute('/api/paypal/return')({
     handlers: {
       GET: async ({ request }) => {
         const paypalOrderId = new URL(request.url).searchParams.get('token')
-        if (!paypalOrderId) return redirect('/music', request)
+        if (!paypalOrderId || !/^[A-Z0-9]{10,40}$/.test(paypalOrderId)) return redirect('/music', request)
 
         const order = await findByPaypalId(paypalOrderId)
         if (!order) {
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/api/paypal/return')({
         }
 
         const orderPage = `/order/${order.accessToken}`
-        if (order.status !== 'created') return redirect(orderPage, request)
+        if (!['created', 'pending'].includes(order.status)) return redirect(orderPage, request)
 
         try {
           const payment = await capturePaypalOrder(paypalOrderId)

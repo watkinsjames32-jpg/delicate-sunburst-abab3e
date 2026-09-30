@@ -14,9 +14,10 @@ import {
   type MerchCategory,
   type MerchItem,
   type Product,
+  type Purchasable,
   type UpcomingRelease,
 } from '../data/catalog'
-import { getBandcampLinks } from '../server/storefront.functions'
+import { getPaypalStorefront } from '../server/storefront.functions'
 
 export const Route = createFileRoute('/music')({
   head: () => ({
@@ -43,9 +44,9 @@ export const Route = createFileRoute('/music')({
     ],
     links: [{ rel: 'canonical', href: `${siteUrl}/music` }],
   }),
-  loader: async (): Promise<Record<string, string | null> | null> => {
+  loader: async (): Promise<import('../server/storefront').StoreAvailability | null> => {
     try {
-      return await getBandcampLinks()
+      return await getPaypalStorefront()
     } catch (error) {
       console.error('Could not load Bandcamp links', error)
       return null
@@ -57,7 +58,7 @@ export const Route = createFileRoute('/music')({
 /** An item's Bandcamp link. If the loader failed, the catalog's own link is used. */
 function useBandcampUrl(sku: string): string | null {
   const links = Route.useLoaderData()
-  return links?.[sku] ?? findPurchasable(sku)?.bandcampUrl ?? null
+  return links?.items[sku]?.bandcamp ?? findPurchasable(sku)?.bandcampUrl ?? null
 }
 
 const BANDCAMP_BUTTON =
@@ -70,17 +71,22 @@ const BANDCAMP_BUTTON =
 function BuyOptions({ sku, variant = 'lg' }: { sku: string; variant?: 'lg' | 'sm' }) {
   const bandcamp = useBandcampUrl(sku)
   const sizing = variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'
-  if (!bandcamp) return <span className="text-sm font-semibold text-slate-600">Bandcamp listing coming soon</span>
+  const available = Route.useLoaderData()?.items[sku]?.paypal
+  const item = findPurchasable(sku)
+  if (!bandcamp && !available) return <span className="text-sm font-semibold text-slate-600">Checkout temporarily unavailable</span>
 
   return (
-    <a
+    <div className="flex flex-wrap items-center gap-3">
+    {available && item && <PaypalCheckout item={item} />}
+    {bandcamp && <a
       href={bandcamp}
       target="_blank"
       rel="noopener noreferrer"
       className={`${BANDCAMP_BUTTON} ${sizing}`}
     >
       Buy on Bandcamp
-    </a>
+    </a>}
+    </div>
   )
 }
 
@@ -92,7 +98,7 @@ const PAYPAL_BUTTON =
  * colour go to `/api/paypal/checkout`, which sends them on to PayPal; if the
  * order can't be started, the endpoint's reason is shown on the card.
  */
-function PaypalCheckout({ item, size, colour }: { item: MerchItem; size?: string; colour?: string }) {
+function PaypalCheckout({ item, size, colour }: { item: Purchasable; size?: string; colour?: string }) {
   const [starting, setStarting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -109,7 +115,9 @@ function PaypalCheckout({ item, size, colour }: { item: MerchItem; size?: string
         body: JSON.stringify({ sku: item.sku, size, colour }),
       })
       const body = await response.json()
-      if (response.ok && body?.url) {
+      if (response.ok && typeof body?.url === 'string') {
+        const url = new URL(body.url)
+        if (url.protocol !== 'https:' || !['www.paypal.com', 'www.sandbox.paypal.com'].includes(url.hostname)) throw new Error('Invalid checkout URL')
         window.location.href = body.url as string
         return
       }
@@ -130,7 +138,7 @@ function PaypalCheckout({ item, size, colour }: { item: MerchItem; size?: string
       >
         {starting ? 'Taking you to PayPal…' : 'Pay with PayPal'}
       </button>
-      {error && <p className="text-sm text-red-600 mt-3 max-w-sm">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-600 mt-3 max-w-sm">{error}</p>}
     </div>
   )
 }
@@ -180,7 +188,7 @@ function FeaturedRelease({
         )}
         <PreviewPlayer src={product.preview} title={product.title} variant="lg" />
         <YouTubeLink href={product.youtubeUrl} title={product.title} />
-        {useBandcampUrl(product.sku) && <p className="text-2xl font-bold text-slate-900 mb-6">{formatPrice(product.priceCents)}</p>}
+        {(useBandcampUrl(product.sku) || Route.useLoaderData()?.items[product.sku]?.paypal) && <p className="text-2xl font-bold text-slate-900 mb-6">{formatPrice(product.priceCents)}</p>}
         <BuyOptions sku={product.sku} />
       </div>
     </article>
@@ -205,7 +213,7 @@ function ReleaseCard({
         <PreviewPlayer src={product.preview} title={product.title} />
         <YouTubeLink href={product.youtubeUrl} title={product.title} />
         <div className="mt-auto">
-          {useBandcampUrl(product.sku) && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(product.priceCents)}</p>}
+          {(useBandcampUrl(product.sku) || Route.useLoaderData()?.items[product.sku]?.paypal) && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(product.priceCents)}</p>}
           <BuyOptions sku={product.sku} variant="sm" />
         </div>
       </div>
@@ -407,7 +415,7 @@ function MerchCard({ item }: { item: MerchItem }) {
   }
   const choosePhoto = (index: number) => {
     setPhoto(index)
-    if (pairsPhotos && item.sellOnPaypal) setColour(item.colours![index])
+    if (pairsPhotos) setColour(item.colours![index])
   }
 
   return (
@@ -421,7 +429,7 @@ function MerchCard({ item }: { item: MerchItem }) {
         {item.description && (
           <p className="text-sm text-slate-600 leading-relaxed mb-5">{item.description}</p>
         )}
-        {item.sellOnPaypal ? (
+        {Route.useLoaderData()?.items[item.sku]?.paypal ? (
           <div className="mt-auto">
             {item.sizes && (
               <OptionPicker
@@ -435,7 +443,7 @@ function MerchCard({ item }: { item: MerchItem }) {
               <OptionPicker label="Colour" options={item.colours} value={colour} onChange={chooseColour} />
             )}
             <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
-            <PaypalCheckout item={item} size={size} colour={colour} />
+            <PaypalCheckout item={{ ...item, kind: 'merch' }} size={size} colour={colour} />
           </div>
         ) : (
           <div className="mt-auto">
@@ -504,8 +512,7 @@ function MusicStore() {
             Shop Music &amp; Merchandise
           </h1>
           <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
-            Explore London&rsquo;s singles and Koi Ware. Singles are sold on Bandcamp, and merch
-            on Bandcamp or PayPal — purchase links appear as each item is published.
+            Explore London&rsquo;s singles and Koi Ware. Available singles and merch can be purchased with PayPal or Bandcamp — purchase links appear as each item is published.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
             <a
@@ -538,7 +545,7 @@ function MusicStore() {
               <div className="mt-16">
                 <h2 className="text-2xl font-bold text-slate-900 mb-2">More singles</h2>
                 <p className="text-slate-600 mb-8">
-                  Hit play for a 30-second preview. Buy the full download on Bandcamp.
+                  Hit play for a 30-second preview. Choose PayPal or Bandcamp for your full download.
                 </p>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {moreSingles.map((product) => (
@@ -576,7 +583,7 @@ function MusicStore() {
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Yours to keep</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Bandcamp delivers your download straight after checkout — play it on any phone,
+                Your download is available after payment confirmation — play it on any phone,
                 laptop, or car stereo.
               </p>
             </div>

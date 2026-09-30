@@ -97,8 +97,8 @@ function OrderPage() {
     heading = 'Payment not finished'
     body = (
       <p className="text-slate-700 leading-relaxed">
-        This PayPal payment wasn&rsquo;t completed, so you haven&rsquo;t been charged. You can
-        try again from the store.
+        We haven&rsquo;t confirmed this payment yet. Refresh this page to check again. If PayPal
+        shows a charge, keep your receipt and contact us before placing another order.
       </p>
     )
   } else {
@@ -127,6 +127,9 @@ function OrderPage() {
             </p>
           )}
           {body}
+          {order && ['created', 'pending'].includes(order.status) && (
+            <button type="button" onClick={() => window.location.reload()} className={`${PRIMARY_BUTTON} mt-6`}>Check payment status</button>
+          )}
           <div className="mt-10">
             <Link to="/music" className="text-sm font-semibold text-sky-700 hover:text-slate-900">
               &larr; Back to the store
