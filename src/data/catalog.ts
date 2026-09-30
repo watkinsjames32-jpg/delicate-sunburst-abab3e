@@ -68,10 +68,10 @@ export const products: Product[] = [
   },
   {
     sku: 'ride-the-wave',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/ride-the-wave',
+    bandcampUrl: 'https://londonkoimusic.bandcamp.com/track/ride-the-wave',
     title: 'Ride The Wave',
     format: singleFormat('VBR ~190kbps', '2:53'),
-    priceCents: SINGLE_PRICE_CENTS,
+    priceCents: 150,
     cover: '/img/ride-the-wave-cover.jpg',
     preview: '/audio/ride-the-wave-preview.mp3',
   },

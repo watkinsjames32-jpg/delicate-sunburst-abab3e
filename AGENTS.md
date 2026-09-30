@@ -172,8 +172,9 @@ account other than the payee, is saved as `mismatch` and never delivered; a capt
 #### Connecting Bandcamp
 
 **Current behaviour:** `bandcampUrlFor()` in `bandcamp.ts` returns only the release's `bandcampUrl` from
-`catalog.ts` — the four singles link to `https://londonkoi.bandcamp.com/track/<slug>` (`facetime`,
-`ride-the-wave`, `be-great`, `special`). The environment variables are not read, because some saved
+`catalog.ts` — the four singles link to `https://<account>.bandcamp.com/track/<slug>` (`facetime`,
+`ride-the-wave`, `be-great`, `special`). The live account is `londonkoimusic` (FaceTime and Ride The
+Wave point there); `londonkoi.bandcamp.com` track pages return 404. The environment variables are not read, because some saved
 values have misspelled hosts. Merch has no link, so its cards say "Bandcamp listing coming soon". The
 lookup order below is the original design, kept for reference:
 
