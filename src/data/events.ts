@@ -47,9 +47,20 @@ export const pastEvents: PastEvent[] = [
     ],
   },
   {
-    title: 'In the Studio',
-    description: 'Behind the scenes in the vocal booth during a recording session.',
+    title: 'In The Studio with Three-Time Grammy Winner Herb Middleton',
+    description:
+      'Behind the scenes in the studio with three-time Grammy-winning producer Herb Middleton during a recording session.',
     media: [
+      {
+        type: 'video',
+        src: '/video/events/in-the-studio-with-herb-middleton.mp4',
+        label: 'London Koi in the studio with three-time Grammy winner Herb Middleton',
+      },
+      {
+        type: 'video',
+        src: '/video/events/studio-with-herb-middleton.mp4',
+        label: 'London Koi recording with Herb Middleton in the studio',
+      },
       {
         type: 'photo',
         src: '/img/events/studio-recording-session.jpg',
