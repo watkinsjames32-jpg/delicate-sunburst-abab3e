@@ -301,7 +301,7 @@ export async function createPaypalOrder(
           items: [
             {
               name: name.slice(0, 127),
-              sku: size ? `${item.sku}-${size}` : item.sku,
+              sku: size ? `${item.sku}-${size.replace(/[^A-Za-z0-9]+/g, '-')}` : item.sku,
               quantity: '1',
               unit_amount: money(itemCents),
               category: isMerch ? 'PHYSICAL_GOODS' : 'DIGITAL_GOODS',

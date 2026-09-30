@@ -84,6 +84,57 @@ function BuyOptions({ sku, variant = 'lg' }: { sku: string; variant?: 'lg' | 'sm
   )
 }
 
+const PAYPAL_BUTTON =
+  'rounded-full bg-[#0070ba] text-white font-semibold hover:bg-[#005ea6] transition-colors shadow-sm disabled:opacity-60'
+
+/**
+ * "Pay with PayPal" for an item this site sells itself. The buyer's size and
+ * colour go to `/api/paypal/checkout`, which sends them on to PayPal; if the
+ * order can't be started, the endpoint's reason is shown on the card.
+ */
+function PaypalCheckout({ item, size, colour }: { item: MerchItem; size?: string; colour?: string }) {
+  const [starting, setStarting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const startCheckout = async () => {
+    if (item.sizes && !size) return setError('Choose a size to continue.')
+    if (item.colours && !colour) return setError('Choose a colour to continue.')
+
+    setStarting(true)
+    setError(null)
+    try {
+      const response = await fetch('/api/paypal/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sku: item.sku, size, colour }),
+      })
+      const body = await response.json()
+      if (response.ok && body?.url) {
+        window.location.href = body.url as string
+        return
+      }
+      setError(body?.error ?? 'Could not start checkout. Please try again.')
+    } catch {
+      setError('Could not reach checkout. Please check your connection and try again.')
+    }
+    setStarting(false)
+  }
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={startCheckout}
+        disabled={starting}
+        className={`${PAYPAL_BUTTON} px-5 py-2 text-sm`}
+      >
+        {starting ? 'Taking you to PayPal…' : 'Pay with PayPal'}
+      </button>
+      {error && <p className="text-sm text-red-600 mt-3 max-w-sm">{error}</p>}
+    </div>
+  )
+}
+
 /** Cover art when a release has artwork, otherwise a titled tile. */
 function Cover({ product }: { product: Product }) {
   if (product.cover) {
@@ -205,8 +256,19 @@ const MERCH_TILES: Record<MerchCategory, string> = {
 }
 
 /** Product photo(s) when they exist, otherwise a koi-marked tile in the item's palette. */
-function MerchTile({ item }: { item: MerchItem }) {
-  const [shown, setShown] = useState(0)
+function MerchTile({
+  item,
+  shown: chosen,
+  onShow,
+}: {
+  item: MerchItem
+  /** Photo to show, when the card controls it (e.g. from the colour picker). */
+  shown?: number
+  onShow?: (index: number) => void
+}) {
+  const [own, setOwn] = useState(0)
+  const shown = chosen ?? own
+  const setShown = onShow ?? setOwn
 
   if (item.photos && item.photos.length > 0) {
     const photos = item.photos
@@ -292,11 +354,66 @@ function SizeList({ item }: { item: MerchItem }) {
   )
 }
 
+/** One set of choices on a PayPal card — sizes or colourways. */
+function OptionPicker({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string
+  options: string[]
+  value: string | undefined
+  onChange: (option: string) => void
+}) {
+  return (
+    <fieldset className="mb-4">
+      <legend className="text-xs uppercase tracking-widest text-sky-700 font-semibold mb-2">
+        {label}
+      </legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => onChange(option)}
+            aria-pressed={value === option}
+            className={`min-w-11 px-3 py-1.5 rounded-full border text-sm font-semibold transition-colors ${
+              value === option
+                ? 'border-slate-900 bg-slate-900 text-white'
+                : 'border-sky-300 bg-white text-slate-700 hover:border-slate-400'
+            }`}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  )
+}
+
 function MerchCard({ item }: { item: MerchItem }) {
+  const [size, setSize] = useState<string | undefined>(undefined)
+  const [colour, setColour] = useState<string | undefined>(undefined)
+  const [photo, setPhoto] = useState(0)
+  const bandcamp = useBandcampUrl(item.sku)
+
+  // Colourways and photos are listed in the same order, so picking a colour
+  // shows it and picking a photo picks its colour.
+  const pairsPhotos = item.colours && item.photos?.length === item.colours.length
+  const chooseColour = (next: string) => {
+    setColour(next)
+    if (pairsPhotos) setPhoto(item.colours!.indexOf(next))
+  }
+  const choosePhoto = (index: number) => {
+    setPhoto(index)
+    if (pairsPhotos && item.sellOnPaypal) setColour(item.colours![index])
+  }
+
   return (
     <article className="rounded-3xl bg-white border border-sky-200 shadow-sm overflow-hidden flex flex-col">
       <div className="aspect-square">
-        <MerchTile item={item} />
+        <MerchTile item={item} shown={photo} onShow={choosePhoto} />
       </div>
       <div className="p-6 flex flex-col grow">
         <h3 className="text-xl font-bold text-slate-900 mb-1">{item.title}</h3>
@@ -304,11 +421,29 @@ function MerchCard({ item }: { item: MerchItem }) {
         {item.description && (
           <p className="text-sm text-slate-600 leading-relaxed mb-5">{item.description}</p>
         )}
-        <div className="mt-auto">
-          <SizeList item={item} />
-          {useBandcampUrl(item.sku) && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>}
-          <BuyOptions sku={item.sku} variant="sm" />
-        </div>
+        {item.sellOnPaypal ? (
+          <div className="mt-auto">
+            {item.sizes && (
+              <OptionPicker
+                label={item.category === 'Jeans' ? 'Waist' : 'Size'}
+                options={item.sizes}
+                value={size}
+                onChange={setSize}
+              />
+            )}
+            {item.colours && (
+              <OptionPicker label="Colour" options={item.colours} value={colour} onChange={chooseColour} />
+            )}
+            <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
+            <PaypalCheckout item={item} size={size} colour={colour} />
+          </div>
+        ) : (
+          <div className="mt-auto">
+            <SizeList item={item} />
+            {bandcamp && <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>}
+            <BuyOptions sku={item.sku} variant="sm" />
+          </div>
+        )}
       </div>
     </article>
   )
@@ -370,7 +505,7 @@ function MusicStore() {
           </h1>
           <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
             Explore London&rsquo;s singles and Koi Ware. Singles are sold on Bandcamp, and merch
-            purchase links will appear as each item is published there.
+            on Bandcamp or PayPal — purchase links appear as each item is published.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
             <a
@@ -434,8 +569,8 @@ function MusicStore() {
             <div className="rounded-2xl border border-sky-200 bg-white p-6">
               <h3 className="font-semibold text-slate-900 mb-2">Secure checkout</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                When an item is available, its purchase link takes you to Bandcamp. Card details
-                never touch this site.
+                When an item is available, its purchase link takes you to Bandcamp or PayPal. Card
+                details never touch this site.
               </p>
             </div>
             <div className="rounded-2xl border border-sky-200 bg-white p-6">

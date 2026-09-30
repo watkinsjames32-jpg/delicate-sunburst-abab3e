@@ -115,7 +115,11 @@ buttons. Merch cards list their sizes for reference; the buyer picks one on Band
 its links through `getBandcampLinks()` in `src/server/storefront.functions.ts`. The home page's
 "Buy & Download" button goes to `/music`. The PayPal checkout (`/api/paypal/*`, `/order/<token>`,
 `/api/download/<token>`), `storeAvailability()` and the Shopify checkout (`/api/checkout`) are still in
-the code, so earlier PayPal buyers keep their order pages and downloads, but the page no longer uses them.
+the code, so earlier PayPal buyers keep their order pages and downloads. A merch item with
+`sellOnPaypal: true` in `catalog.ts` (none at the moment) gets size and colour pickers and a **Pay
+with PayPal** button instead. A `colours`
+list on an item is required at PayPal checkout and saved with the size as e.g. `M, Black`; when it
+lines up with `photos`, picking a colour shows its photo.
 
 #### Connecting Shopify
 
@@ -175,7 +179,11 @@ account other than the payee, is saved as `mismatch` and never delivered; a capt
 `catalog.ts` — the four singles link to `https://<account>.bandcamp.com/track/<slug>` (`facetime`,
 `ride-the-wave`, `be-great-2`, `special`). The live account is `londonkoimusic` (FaceTime and Ride The
 Wave point there, and Be Great is `be-great-2` because `/track/be-great` now redirects to FaceTime); `londonkoi.bandcamp.com` track pages return 404. The environment variables are not read, because some saved
-values have misspelled hosts. Merch has no link, so its cards say "Bandcamp listing coming soon". The
+values have misspelled hosts. Merch has no link except the Koi Ware Logo Tee
+(`https://londonkoimusic.bandcamp.com/merch/koi-ware-logo-tee`) and the FaceTime Tee, which has no
+listing of its own yet and links to the merch page `https://londonkoimusic.bandcamp.com/merch` —
+point it at its own `/merch/<slug>` once that is published. The other cards say "Bandcamp listing
+coming soon". The
 lookup order below is the original design, kept for reference:
 
 Where an item's Bandcamp link comes from, first match wins:

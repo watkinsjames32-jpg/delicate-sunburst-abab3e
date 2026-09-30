@@ -20,10 +20,12 @@ export const Route = createFileRoute('/api/paypal/checkout')({
       POST: async ({ request }) => {
         let sku: unknown
         let size: unknown
+        let colour: unknown
         try {
-          const body = (await request.json()) as { sku?: unknown; size?: unknown }
+          const body = (await request.json()) as { sku?: unknown; size?: unknown; colour?: unknown }
           sku = body.sku
           size = body.size
+          colour = body.colour
         } catch {
           return Response.json({ error: 'Invalid request body.' }, { status: 400 })
         }
@@ -41,12 +43,21 @@ export const Route = createFileRoute('/api/paypal/checkout')({
           return Response.json({ error: 'Please choose a size first.' }, { status: 400 })
         }
 
+        if (product.colours && (typeof colour !== 'string' || !product.colours.includes(colour))) {
+          return Response.json({ error: 'Please choose a colour first.' }, { status: 400 })
+        }
+
         if (!paypalConfigured()) {
           console.warn('PayPal checkout is not configured', describePaypalSetup())
           return Response.json({ error: 'PayPal checkout is not connected yet.' }, { status: 503 })
         }
 
-        const chosenSize = product.sizes && typeof size === 'string' ? size : undefined
+        // The colour rides along with the size, e.g. "M, Black", so the order
+        // record and PayPal's receipt both name the exact variant to pack.
+        const chosenSize =
+          [product.sizes && size, product.colours && colour]
+            .filter((part): part is string => typeof part === 'string')
+            .join(', ') || undefined
 
         try {
           if (product.kind === 'music' && !(await skusWithMasters([product.sku])).has(product.sku)) {
