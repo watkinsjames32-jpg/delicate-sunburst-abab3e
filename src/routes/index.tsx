@@ -211,18 +211,44 @@ function EventMediaTile({ item }: { item: EventMedia }) {
   )
 }
 
+const FEATURED_VIDEO = '/video/facetime-video.mp4'
+const FEATURED_FLYER = '/img/facetime-new-hot-single.jpg'
+
+// Portrait FaceTime video; falls back to the promo flyer if the clip is missing or unplayable.
+function FeaturedVideo() {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="aspect-square rounded-3xl overflow-hidden shadow-xl ring-1 ring-sky-200">
+        <img
+          src={img(FEATURED_FLYER, 900)}
+          alt='London Koi "FaceTime" — new hot single, on all music platforms'
+          className="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+  return (
+    <div className="mx-auto max-w-xs sm:max-w-sm aspect-[406/720] rounded-3xl overflow-hidden shadow-xl ring-1 ring-sky-200 bg-slate-900">
+      <video
+        src={`${FEATURED_VIDEO}#t=0.1`}
+        controls
+        playsInline
+        preload="metadata"
+        onError={() => setFailed(true)}
+        aria-label='London Koi "FaceTime" video'
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )
+}
+
 function Music() {
   return (
     <section id="music" className="py-24 px-6 bg-sky-50 text-slate-900">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
         <div className="w-full md:w-1/2">
-          <div className="aspect-square rounded-3xl overflow-hidden shadow-xl ring-1 ring-sky-200">
-            <img
-              src={img('/img/facetime-new-hot-single.jpg', 900)}
-              alt='London Koi "FaceTime" — new hot single, on all music platforms'
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <FeaturedVideo />
         </div>
         <div className="w-full md:w-1/2">
           <p className="uppercase tracking-widest text-sky-700 text-sm font-semibold mb-3">
