@@ -77,7 +77,7 @@ export const products: Product[] = [
   },
   {
     sku: 'be-great',
-    bandcampUrl: 'https://londonkoi.bandcamp.com/track/be-great',
+    bandcampUrl: 'https://londonkoimusic.bandcamp.com/track/be-great-2',
     title: 'Be Great',
     format: singleFormat('VBR ~190kbps', '4:28'),
     priceCents: SINGLE_PRICE_CENTS,
