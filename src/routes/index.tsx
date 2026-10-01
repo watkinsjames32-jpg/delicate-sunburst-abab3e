@@ -270,11 +270,13 @@ function Music() {
           />
           <YouTubeLink href={featuredProduct.youtubeUrl} title={featuredProduct.title} />
           <div className="flex flex-wrap items-center gap-4">
+            {/* Opens FaceTime's PayPal payment link; falls back to the store if it has none. */}
             <a
-              href="/music#music"
-              className="px-7 py-3 rounded-full bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition-colors shadow-sm"
+              href={featuredProduct.paypalPaymentUrl ?? '/music#music'}
+              {...(featuredProduct.paypalPaymentUrl && { target: '_blank', rel: 'noopener noreferrer' })}
+              className="px-7 py-3 rounded-full bg-[#0070ba] text-white font-semibold hover:bg-[#005ea6] transition-colors shadow-sm"
             >
-              Buy &amp; Download
+              Buy with PayPal
             </a>
             <span className="text-sm text-slate-500">
               Also on all major streaming platforms
