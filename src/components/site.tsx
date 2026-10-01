@@ -3,8 +3,8 @@ import { Pause, Play, Youtube } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 /** Build a Netlify Image CDN URL so large source images are resized + served as WebP. */
-export function img(url: string, w: number, extra?: string) {
-  return `/.netlify/images?url=${encodeURIComponent(url)}&w=${w}&fm=webp${extra ?? ''}`
+export function img(url: string, w: number, extra?: string, fm: 'webp' | 'jpg' = 'webp') {
+  return `/.netlify/images?url=${encodeURIComponent(url)}&w=${w}&fm=${fm}${extra ?? ''}`
 }
 
 export function Nav() {
