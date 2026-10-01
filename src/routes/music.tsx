@@ -272,11 +272,19 @@ function MerchTile({
     const current = photos[shown] ?? photos[0]
     return (
       <div className="relative w-full h-full">
+        {/* Served as JPEG rather than WebP so a saved photo can be posted anywhere. */}
         <img
-          src={img(current.src, 700)}
+          src={img(current.src, 700, undefined, 'jpg')}
           alt={current.alt}
           className="w-full h-full object-cover"
         />
+        <a
+          href={current.src}
+          download
+          className="absolute top-3 right-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-800 shadow hover:bg-white"
+        >
+          Save JPG
+        </a>
         {photos.length > 1 && (
           <div className="absolute bottom-3 inset-x-0 flex justify-center gap-2">
             {photos.map((photo, i) => (
@@ -290,7 +298,7 @@ function MerchTile({
                   i === shown ? 'border-amber-400' : 'border-white/80 opacity-80 hover:opacity-100'
                 }`}
               >
-                <img src={img(photo.src, 120)} alt="" className="w-full h-full object-cover" />
+                <img src={img(photo.src, 120, undefined, 'jpg')} alt="" className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
