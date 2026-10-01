@@ -262,7 +262,7 @@ a release or a merch item and flattens both into one priced shape, so only that 
 the difference. Shipping rates, shipping countries and stock live in Shopify and Bandcamp, and
 their orders are packed from each platform's own admin; PayPal merch orders use the flat
 `PAYPAL_SHIPPING_USD` rate, have no stock tracking, and are packed from the `paypal_orders` table. Merch items have no cover photos yet, so cards render a koi-marked gradient tile keyed to the
-category; drop a photo in `public/img/` and set `cover` to replace it, or set `photos` (each with `src` and `alt`) to show several with a thumbnail switcher — the Koi Ware Logo Tee and the FaceTime Tee use this for their black and white colourways, and both list matching `colours` so the PayPal order records which one was bought (the FaceTime Tee photos are mockups of the FaceTime logo on a plain tee, not photos of a printed shirt). Phone photos arrive as HEIC, which browsers can't display, so convert them to JPEG first.
+category; drop a photo in `public/img/` and set `cover` to replace it, or set `photos` (each with `src` and `alt`) to show several with a thumbnail switcher — the Koi Ware Logo Tee and the FaceTime Tee use this for their black and white colourways, and both list matching `colours` so the PayPal order records which one was bought (the FaceTime Tee photos are mockups of the FaceTime logo on a plain tee, not photos of a printed shirt). Every merch item with `photos` is also shown in the home page Koi Ware section, all colourways side by side, served as JPEG with a "Save JPG" link to the original file so the photos can be saved and posted elsewhere. Phone photos arrive as HEIC, which browsers can't display, so convert them to JPEG first.
 
 ### Images
 
