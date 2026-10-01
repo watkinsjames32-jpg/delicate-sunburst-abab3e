@@ -202,6 +202,7 @@ export const merch: MerchItem[] = [
     sizes: APPAREL_SIZES,
     colours: ['Black', 'White'],
     bandcampUrl: 'https://londonkoimusic.bandcamp.com/merch/koi-ware-logo-tee',
+    paypalPaymentUrl: 'https://www.paypal.com/ncp/payment/W3SVY3YB8P662',
   },
   {
     sku: 'koi-ware-facetime-tee',
