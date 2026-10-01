@@ -97,6 +97,7 @@ export const products: Product[] = [
     priceCents: SINGLE_PRICE_CENTS,
     cover: '/img/be-great-cover.jpg',
     preview: '/audio/be-great-preview.mp3',
+    paypalPaymentUrl: 'https://www.paypal.com/ncp/payment/DZHXUA8HNVSGE',
   },
   {
     sku: 'special',
