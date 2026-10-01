@@ -77,6 +77,7 @@ export const products: Product[] = [
     priceCents: SINGLE_PRICE_CENTS,
     cover: '/img/facetime-new-hot-single.jpg',
     preview: '/audio/facetime-preview.mp3',
+    paypalPaymentUrl: 'https://www.paypal.com/ncp/payment/ATR2APYYC4LXJ',
   },
   {
     sku: 'ride-the-wave',
