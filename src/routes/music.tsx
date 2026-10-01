@@ -400,21 +400,36 @@ function MerchCard({ item }: { item: MerchItem }) {
           <p className="text-sm text-slate-600 leading-relaxed mb-5">{item.description}</p>
         )}
         <div className="mt-auto">
-          {item.sizes ? (
-            <OptionPicker
-              label={item.category === 'Jeans' ? 'Waist' : 'Size'}
-              options={item.sizes}
-              value={size}
-              onChange={setSize}
-            />
+          {item.paypalPaymentUrl ? (
+            <>
+              {/* The hosted payment link asks for size and colour itself. */}
+              <p className="text-sm text-slate-500 mb-4">
+                {item.sizes ? `Sizes ${item.sizes.join(', ')}` : 'One size'}
+                {item.colours && ` · ${item.colours.join(' or ')}`}
+                {(item.sizes || item.colours) && ' — chosen on PayPal'}
+              </p>
+              <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
+              <BuyOptions sku={item.sku} variant="sm" />
+            </>
           ) : (
-            <p className="text-sm text-slate-500 mb-4">One size</p>
+            <>
+              {item.sizes ? (
+                <OptionPicker
+                  label={item.category === 'Jeans' ? 'Waist' : 'Size'}
+                  options={item.sizes}
+                  value={size}
+                  onChange={setSize}
+                />
+              ) : (
+                <p className="text-sm text-slate-500 mb-4">One size</p>
+              )}
+              {item.colours && (
+                <OptionPicker label="Colour" options={item.colours} value={colour} onChange={chooseColour} />
+              )}
+              <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
+              <PaypalCheckout item={{ ...item, kind: 'merch' }} size={size} colour={colour} />
+            </>
           )}
-          {item.colours && (
-            <OptionPicker label="Colour" options={item.colours} value={colour} onChange={chooseColour} />
-          )}
-          <p className="text-xl font-bold text-slate-900 mb-4">{formatPrice(item.priceCents)}</p>
-          <PaypalCheckout item={{ ...item, kind: 'merch' }} size={size} colour={colour} />
         </div>
       </div>
     </article>
