@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site'
-import { featuredProduct } from '../data/catalog'
+import { featuredProduct, merch } from '../data/catalog'
 import { pastEvents } from '../data/events'
 import type { EventMedia, PastEvent } from '../data/events'
 import { siteUrl } from './__root'
@@ -297,6 +297,7 @@ function KoiWare() {
     { category: 'Jeans', copy: 'Straight-fit rigid denim, mid indigo' },
     { category: 'Accessories', copy: 'Heavy canvas totes and more' },
   ]
+  const tees = merch.filter((item) => item.photos && item.photos.length > 0)
 
   return (
     <section id="merch" className="py-24 px-6 bg-white text-slate-900 scroll-mt-20">
@@ -312,6 +313,46 @@ function KoiWare() {
             and you&rsquo;ll be spotted from the stage.
           </p>
         </div>
+
+        {tees.length > 0 && (
+          <div className="grid gap-8 sm:grid-cols-2 mb-14">
+            {tees.map((item) => (
+              <div key={item.sku}>
+                <div className="grid grid-cols-2 gap-3">
+                  {item.photos!.map((photo) => (
+                    <div
+                      key={photo.src}
+                      className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-sky-50 border border-sky-100"
+                    >
+                      {/* Served as JPEG rather than WebP so a saved photo can be posted anywhere. */}
+                      <img
+                        src={img(photo.src, 500, undefined, 'jpg')}
+                        srcSet={`${img(photo.src, 350, undefined, 'jpg')} 350w, ${img(photo.src, 500, undefined, 'jpg')} 500w, ${img(photo.src, 800, undefined, 'jpg')} 800w`}
+                        sizes="(min-width: 640px) 25vw, 50vw"
+                        alt={photo.alt}
+                        loading="lazy"
+                        className="w-full h-full object-cover"
+                      />
+                      <a
+                        href={photo.src}
+                        download
+                        className="absolute top-2 right-2 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-slate-800 shadow hover:bg-white"
+                      >
+                        Save JPG
+                      </a>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 flex items-baseline justify-between gap-4">
+                  <span className="font-semibold text-slate-900">{item.title}</span>
+                  <span className="text-sm text-slate-500">
+                    ${(item.priceCents / 100).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="grid gap-x-10 gap-y-5 sm:grid-cols-2">
           {lines.map((line) => (
