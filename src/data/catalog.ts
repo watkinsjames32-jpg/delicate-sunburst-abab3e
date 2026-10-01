@@ -87,6 +87,7 @@ export const products: Product[] = [
     priceCents: SINGLE_PRICE_CENTS,
     cover: '/img/ride-the-wave-cover.jpg',
     preview: '/audio/ride-the-wave-preview.mp3',
+    paypalPaymentUrl: 'https://www.paypal.com/ncp/payment/K3V696T9VMFGL',
   },
   {
     sku: 'be-great',
