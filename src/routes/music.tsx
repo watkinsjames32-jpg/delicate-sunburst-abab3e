@@ -53,6 +53,18 @@ export const Route = createFileRoute('/music')({
 function BuyOptions({ sku, variant = 'lg' }: { sku: string; variant?: 'lg' | 'sm' }) {
   const item = findPurchasable(sku)
   if (!item) return <span className="text-sm font-semibold text-slate-600">Checkout temporarily unavailable</span>
+  if (item.paypalPaymentUrl) {
+    return (
+      <a
+        href={item.paypalPaymentUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${PAYPAL_BUTTON} inline-block ${variant === 'lg' ? 'px-7 py-3' : 'px-5 py-2 text-sm'}`}
+      >
+        Buy with PayPal
+      </a>
+    )
+  }
 
   return <PaypalCheckout item={item} variant={variant} />
 }
