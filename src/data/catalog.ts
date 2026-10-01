@@ -26,6 +26,13 @@ type Storefronts = {
    * order and records it in `paypal_orders` for packing.
    */
   sellOnPaypal?: boolean
+  /**
+   * A PayPal hosted payment link (`https://www.paypal.com/ncp/payment/...`)
+   * made in the PayPal account. When set, "Buy with PayPal" goes straight to
+   * it instead of starting an order through `/api/paypal/checkout`, so PayPal
+   * takes the payment and the order isn't recorded or delivered by this site.
+   */
+  paypalPaymentUrl?: string
 }
 
 export type Product = Storefronts & {
@@ -98,6 +105,7 @@ export const products: Product[] = [
     cover: '/img/special-cover.png',
     preview: '/audio/special-preview.mp3',
     youtubeUrl: 'https://youtu.be/tqHnRDPOP8g',
+    paypalPaymentUrl: 'https://www.paypal.com/ncp/payment/VV9FPXF8NH3X6',
   },
 ]
 
@@ -301,6 +309,7 @@ export function findPurchasable(sku: string): Purchasable | undefined {
       priceCents: product.priceCents,
       bandcampUrl: product.bandcampUrl,
       shopifyHandle: product.shopifyHandle,
+      paypalPaymentUrl: product.paypalPaymentUrl,
     }
   }
 
@@ -317,6 +326,7 @@ export function findPurchasable(sku: string): Purchasable | undefined {
       colours: item.colours,
       bandcampUrl: item.bandcampUrl,
       shopifyHandle: item.shopifyHandle,
+      paypalPaymentUrl: item.paypalPaymentUrl,
     }
   }
 
