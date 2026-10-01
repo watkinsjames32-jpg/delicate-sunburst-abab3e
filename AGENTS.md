@@ -111,7 +111,7 @@ them. Only PayPal orders have an order page here.
 
 The store page offers PayPal for merchandise and singles whose private MP3 masters are uploaded, once PayPal accepts the configured credentials. Existing Bandcamp links remain available. The page loads public availability through `getPaypalStorefront()`; credentials never leave the server. Merch cards collect size and colour before starting checkout. Shipping addresses are collected on PayPal. The receipt page rechecks pending payments and recovers interrupted confirmation, without marking an unverified payment completed. Repeated captures use a stable PayPal request ID. Download counts are consumed only after the master exists.
 
-An item may instead set `paypalPaymentUrl` in `catalog.ts` to a PayPal hosted payment link (`https://www.paypal.com/ncp/payment/...`). Its **Buy with PayPal** button then opens that link in a new tab, skipping `/api/paypal/checkout`: PayPal takes the payment and emails the seller, but the order isn't recorded in `paypal_orders` and no download is served from this site, so the file has to be sent by hand (or attached in PayPal). FaceTime, Ride The Wave and Special use one.
+An item may instead set `paypalPaymentUrl` in `catalog.ts` to a PayPal hosted payment link (`https://www.paypal.com/ncp/payment/...`). Its **Buy with PayPal** button then opens that link in a new tab, skipping `/api/paypal/checkout`: PayPal takes the payment and emails the seller, but the order isn't recorded in `paypal_orders` and no download is served from this site, so the file has to be sent by hand (or attached in PayPal). FaceTime, Ride The Wave, Be Great and Special use one.
 
 Run `node --test tests/paypal.test.mjs` for mocked REST checks (no real charges).
 
