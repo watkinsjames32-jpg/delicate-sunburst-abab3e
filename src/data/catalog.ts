@@ -200,6 +200,7 @@ export const merch: MerchItem[] = [
       },
     ],
     sizes: APPAREL_SIZES,
+    colours: ['Black', 'White'],
     bandcampUrl: 'https://londonkoimusic.bandcamp.com/merch/koi-ware-logo-tee',
   },
   {

@@ -111,7 +111,7 @@ them. Only PayPal orders have an order page here.
 
 The store page offers PayPal for merchandise and singles whose private MP3 masters are uploaded, once PayPal accepts the configured credentials. Existing Bandcamp links remain available. The page loads public availability through `getPaypalStorefront()`; credentials never leave the server. Merch cards collect size and colour before starting checkout. Shipping addresses are collected on PayPal. The receipt page rechecks pending payments and recovers interrupted confirmation, without marking an unverified payment completed. Repeated captures use a stable PayPal request ID. Download counts are consumed only after the master exists.
 
-An item may instead set `paypalPaymentUrl` in `catalog.ts` to a PayPal hosted payment link (`https://www.paypal.com/ncp/payment/...`). Its **Buy with PayPal** button then opens that link in a new tab, skipping `/api/paypal/checkout`: PayPal takes the payment and emails the seller, but the order isn't recorded in `paypal_orders` and no download is served from this site, so the file has to be sent by hand (or attached in PayPal). FaceTime, Ride The Wave, Be Great and Special use one.
+An item may instead set `paypalPaymentUrl` in `catalog.ts` to a PayPal hosted payment link (`https://www.paypal.com/ncp/payment/...`). Its **Buy with PayPal** button then opens that link in a new tab, skipping `/api/paypal/checkout`: PayPal takes the payment and emails the seller, but the order isn't recorded in `paypal_orders` and no download is served from this site, so the file has to be sent by hand (or attached in PayPal). FaceTime, Ride The Wave, Be Great and Special use one. The home page New Hot Single section's **Buy with PayPal** button opens `featuredProduct`'s link the same way (or goes to `/music` if it has none).
 
 Run `node --test tests/paypal.test.mjs` for mocked REST checks (no real charges).
 
@@ -262,7 +262,7 @@ a release or a merch item and flattens both into one priced shape, so only that 
 the difference. Shipping rates, shipping countries and stock live in Shopify and Bandcamp, and
 their orders are packed from each platform's own admin; PayPal merch orders use the flat
 `PAYPAL_SHIPPING_USD` rate, have no stock tracking, and are packed from the `paypal_orders` table. Merch items have no cover photos yet, so cards render a koi-marked gradient tile keyed to the
-category; drop a photo in `public/img/` and set `cover` to replace it, or set `photos` (each with `src` and `alt`) to show several with a thumbnail switcher — the Koi Ware Logo Tee and the FaceTime Tee use this for their black and white colourways (the FaceTime Tee photos are mockups of the FaceTime logo on a plain tee, not photos of a printed shirt). Phone photos arrive as HEIC, which browsers can't display, so convert them to JPEG first.
+category; drop a photo in `public/img/` and set `cover` to replace it, or set `photos` (each with `src` and `alt`) to show several with a thumbnail switcher — the Koi Ware Logo Tee and the FaceTime Tee use this for their black and white colourways, and both list matching `colours` so the PayPal order records which one was bought (the FaceTime Tee photos are mockups of the FaceTime logo on a plain tee, not photos of a printed shirt). Phone photos arrive as HEIC, which browsers can't display, so convert them to JPEG first.
 
 ### Images
 
