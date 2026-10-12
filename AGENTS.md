@@ -31,7 +31,7 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 │   │   └── site.tsx         # Shared nav + footer + preview player + Netlify Image CDN helper
 │   ├── data
 │   │   ├── catalog.ts       # Purchasable releases + Koi Ware merch (price, art, sizes)
-│   │   └── events.ts        # Featured Performances shown under the bio (photos, videos, YouTube)
+│   │   └── events.ts        # Events under the bio: upcoming shows + past performances (photos, videos, YouTube)
 │   ├── routes
 │   │   ├── __root.tsx       # Root layout: HTML shell, page title/meta
 │   │   ├── index.tsx        # Home page: hero, about, music, highlights, booking form
@@ -63,14 +63,20 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 
 ## Key Concepts
 
-The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#featured-performances`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
+The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
 
 The palette is a light blue theme: `sky` tones for backgrounds and eyebrow text, `slate` for body copy, and `amber` for primary buttons (picked up from the yellow blazer in the hero photo).
 
-### Featured Performances
+### Events
 
-The Featured Performances section (formerly Past Events) sits directly under the bio and is driven by `pastEvents` in
-`src/data/events.ts`, newest first. Each event has a title, optional date/location/description,
+The Events section (`#events`, which merged the former Featured Performances section; the old
+`#featured-performances` anchor still lands there) sits directly under the bio and has two halves.
+**Upcoming** is driven by `upcomingEvents` in `src/data/events.ts`, soonest first — each has a
+title, a free-text `date`, optional `venue`/`location`/`description`, and an optional `ticketUrl`
+shown as a "Get tickets" button. While the list is empty it shows "New dates coming soon" with a
+link to the booking form. Once a show has happened, move it into `pastEvents`.
+
+**Past Events** is driven by `pastEvents` in `src/data/events.ts`, newest first. Each event has a title, optional date/location/description,
 and a `media` list. Photos go in `public/img/events/` and are served through the Image CDN;
 videos go in `public/video/events/` and are served directly (an optional `poster` still can be
 set). A YouTube video is listed as `{ type: 'youtube', id, title }` and embedded full-width

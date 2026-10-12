@@ -32,6 +32,25 @@ export type PastEvent = {
   media: EventMedia[]
 }
 
+/** A show that hasn't happened yet, listed in the Upcoming half of the Events section. */
+export type UpcomingEvent = {
+  title: string
+  /** Shown as-is, e.g. "Saturday, November 14, 2026 · 8 PM" — no parsing. */
+  date: string
+  venue?: string
+  location?: string
+  description?: string
+  /** Absolute https link to buy tickets or RSVP; shown as a "Get tickets" button. */
+  ticketUrl?: string
+}
+
+/**
+ * Soonest first. Empty until shows are announced — the section then says new
+ * dates are coming soon. Once a show has happened, move it into `pastEvents`
+ * (adding any photos or video) so it shows under Past Events.
+ */
+export const upcomingEvents: UpcomingEvent[] = []
+
 /** Newest first. */
 export const pastEvents: PastEvent[] = [
   {

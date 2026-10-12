@@ -3,8 +3,8 @@ import { useState } from 'react'
 
 import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site'
 import { featuredProduct, merch } from '../data/catalog'
-import { pastEvents } from '../data/events'
-import type { EventMedia, PastEvent } from '../data/events'
+import { pastEvents, upcomingEvents } from '../data/events'
+import type { EventMedia, PastEvent, UpcomingEvent } from '../data/events'
 import { siteUrl } from './__root'
 
 export const Route = createFileRoute('/')({
@@ -115,14 +115,35 @@ function About() {
   )
 }
 
-function PastEvents() {
+function Events() {
   return (
-    <section id="featured-performances" className="py-24 px-6 bg-sky-50 text-slate-900 scroll-mt-20">
+    <section id="events" className="py-24 px-6 bg-sky-50 text-slate-900 scroll-mt-20">
+      {/* Keeps older links to the former Featured Performances section working. */}
+      <span id="featured-performances" className="block scroll-mt-20" aria-hidden="true" />
       <div className="max-w-5xl mx-auto">
         <p className="uppercase tracking-[0.3em] text-sky-700 text-sm font-semibold mb-3 text-center">
-          Photos &amp; Video
+          Live &amp; On Stage
         </p>
-        <h2 className="text-3xl font-bold mb-12 text-center">Featured Performances</h2>
+        <h2 className="text-3xl font-bold mb-12 text-center">Events</h2>
+
+        <h3 className="text-xl font-semibold text-slate-800 mb-6">Upcoming</h3>
+        {upcomingEvents.length > 0 ? (
+          <ul className="space-y-4">
+            {upcomingEvents.map((event) => (
+              <UpcomingEventRow key={`${event.date}-${event.title}`} event={event} />
+            ))}
+          </ul>
+        ) : (
+          <div className="rounded-3xl border border-dashed border-sky-300 bg-white py-12 px-6 text-center text-slate-500">
+            New dates coming soon.{' '}
+            <a href="#booking" className="text-sky-700 font-semibold hover:text-sky-900 underline-offset-4 hover:underline">
+              Book London Koi
+            </a>{' '}
+            for your event.
+          </div>
+        )}
+
+        <h3 className="text-xl font-semibold text-slate-800 mt-16 mb-6">Past Events</h3>
         <div className="space-y-10">
           {pastEvents.map((event) => (
             <EventCard key={event.title} event={event} />
@@ -133,13 +154,42 @@ function PastEvents() {
   )
 }
 
+function UpcomingEventRow({ event }: { event: UpcomingEvent }) {
+  const place = [event.venue, event.location].filter(Boolean).join(' · ')
+
+  return (
+    <li className="rounded-3xl border border-sky-200 bg-white shadow-sm p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+      <p className="sm:w-56 shrink-0 text-sm font-semibold uppercase tracking-wide text-sky-700">
+        {event.date}
+      </p>
+      <div className="flex-1">
+        <h4 className="text-lg font-semibold text-slate-900">{event.title}</h4>
+        {place && <p className="text-sm text-slate-500 mt-0.5">{place}</p>}
+        {event.description && (
+          <p className="text-slate-600 leading-relaxed mt-2">{event.description}</p>
+        )}
+      </div>
+      {event.ticketUrl && (
+        <a
+          href={event.ticketUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="self-start sm:self-center px-5 py-2.5 rounded-full bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition-colors"
+        >
+          Get tickets
+        </a>
+      )}
+    </li>
+  )
+}
+
 function EventCard({ event }: { event: PastEvent }) {
   const meta = [event.date, event.location].filter(Boolean).join(' · ')
 
   return (
     <article className="rounded-3xl border border-sky-200 bg-white shadow-sm overflow-hidden">
       <div className="p-7 sm:p-8">
-        <h3 className="text-2xl font-semibold text-sky-800">{event.title}</h3>
+        <h4 className="text-2xl font-semibold text-sky-800">{event.title}</h4>
         {meta && <p className="text-sm text-slate-500 mt-1">{meta}</p>}
         {event.description && (
           <p className="text-slate-600 leading-relaxed mt-4">{event.description}</p>
@@ -555,7 +605,7 @@ function Home() {
       <Nav />
       <Hero />
       <About />
-      <PastEvents />
+      <Events />
       <Music />
       <KoiWare />
       <Highlights />
