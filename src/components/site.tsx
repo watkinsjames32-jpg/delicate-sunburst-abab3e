@@ -18,8 +18,8 @@ export function Nav() {
           <a href="/#about" className="hover:text-slate-900 transition-colors">
             About
           </a>
-          <a href="/#featured-performances" className="hover:text-slate-900 transition-colors">
-            Featured Performances
+          <a href="/#events" className="hover:text-slate-900 transition-colors">
+            Events
           </a>
           <a href="/#music" className="hover:text-slate-900 transition-colors">
             Music
