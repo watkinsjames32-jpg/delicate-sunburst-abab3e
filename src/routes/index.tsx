@@ -243,7 +243,7 @@ function EventMediaTile({ item }: { item: EventMedia }) {
           alt={item.alt}
           loading="lazy"
           onError={() => setFailed(true)}
-          className="w-full h-full object-cover"
+          className={`w-full h-full ${item.uncropped ? 'object-contain' : 'object-cover'}`}
         />
       ) : (
         <video
