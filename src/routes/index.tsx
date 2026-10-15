@@ -279,7 +279,7 @@ function EventMediaTile({ item }: { item: EventMedia }) {
           preload="metadata"
           onError={() => setFailed(true)}
           aria-label={item.label}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
       )}
     </div>
