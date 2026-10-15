@@ -156,13 +156,38 @@ function Events() {
 
 function UpcomingEventRow({ event }: { event: UpcomingEvent }) {
   const place = [event.venue, event.location].filter(Boolean).join(' · ')
+  const [flyerFailed, setFlyerFailed] = useState(false)
+  const flyer = event.flyer && !flyerFailed ? event.flyer : undefined
 
   return (
     <li className="rounded-3xl border border-sky-200 bg-white shadow-sm p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
-      <p className="sm:w-56 shrink-0 text-sm font-semibold uppercase tracking-wide text-sky-700">
-        {event.date}
-      </p>
+      {flyer && (
+        <a
+          href={flyer.src}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full max-w-xs mx-auto sm:mx-0 sm:w-56 shrink-0 aspect-[2/3] rounded-2xl overflow-hidden bg-slate-900"
+        >
+          <img
+            src={img(flyer.src, 448)}
+            srcSet={`${img(flyer.src, 320)} 320w, ${img(flyer.src, 448)} 448w, ${img(flyer.src, 640)} 640w`}
+            sizes="(min-width: 640px) 14rem, 20rem"
+            alt={flyer.alt}
+            loading="lazy"
+            onError={() => setFlyerFailed(true)}
+            className="w-full h-full object-cover"
+          />
+        </a>
+      )}
+      {!flyer && (
+        <p className="sm:w-56 shrink-0 text-sm font-semibold uppercase tracking-wide text-sky-700">
+          {event.date}
+        </p>
+      )}
       <div className="flex-1">
+        {flyer && (
+          <p className="text-sm font-semibold uppercase tracking-wide text-sky-700 mb-1">{event.date}</p>
+        )}
         <h4 className="text-lg font-semibold text-slate-900">{event.title}</h4>
         {place && <p className="text-sm text-slate-500 mt-0.5">{place}</p>}
         {event.description && (

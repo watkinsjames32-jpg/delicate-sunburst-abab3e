@@ -73,7 +73,9 @@ The Events section (`#events`, which merged the former Featured Performances sec
 `#featured-performances` anchor still lands there) sits directly under the bio and has two halves.
 **Upcoming** is driven by `upcomingEvents` in `src/data/events.ts`, soonest first — each has a
 title, a free-text `date`, optional `venue`/`location`/`description`, and an optional `ticketUrl`
-shown as a "Get tickets" button. While the list is empty it shows "New dates coming soon" with a
+shown as a "Get tickets" button, plus an optional `flyer` (`src`, `alt`) — a portrait poster in
+`public/img/events/` shown beside the details through the Image CDN, linking to the full-size file, and hidden if
+missing (the Face Time Is Anytime Tour uses one). While the list is empty it shows "New dates coming soon" with a
 link to the booking form. Once a show has happened, move it into `pastEvents`.
 
 **Past Events** is driven by `pastEvents` in `src/data/events.ts`, newest first. Each event has a title, optional date/location/description,
