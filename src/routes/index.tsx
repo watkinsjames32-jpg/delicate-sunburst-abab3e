@@ -233,8 +233,12 @@ function EventMediaTile({ item }: { item: EventMedia }) {
     )
   }
 
+  const flyer = item.type === 'photo' && item.flyer
+
   return (
-    <div className="aspect-square rounded-2xl overflow-hidden bg-slate-900">
+    <div
+      className={`${flyer ? 'aspect-[707/1000] bg-sky-50' : 'aspect-square bg-slate-900'} rounded-2xl overflow-hidden`}
+    >
       {item.type === 'photo' ? (
         <img
           src={img(item.src, 600)}
@@ -243,7 +247,7 @@ function EventMediaTile({ item }: { item: EventMedia }) {
           alt={item.alt}
           loading="lazy"
           onError={() => setFailed(true)}
-          className="w-full h-full object-cover"
+          className={`w-full h-full ${flyer ? 'object-contain' : 'object-cover'}`}
         />
       ) : (
         <video
