@@ -42,6 +42,11 @@ export type UpcomingEvent = {
   description?: string
   /** Absolute https link to buy tickets or RSVP; shown as a "Get tickets" button. */
   ticketUrl?: string
+  /**
+   * Portrait tour or show poster in `public/img/events/`, shown through the Image
+   * CDN beside the details and linked to the full-size file. Hides itself if missing.
+   */
+  flyer?: { src: string; alt: string }
 }
 
 /**
@@ -49,7 +54,18 @@ export type UpcomingEvent = {
  * dates are coming soon. Once a show has happened, move it into `pastEvents`
  * (adding any photos or video) so it shows under Past Events.
  */
-export const upcomingEvents: UpcomingEvent[] = []
+export const upcomingEvents: UpcomingEvent[] = [
+  {
+    title: 'Face Time Is Anytime Tour',
+    date: '2026 – 2027',
+    description:
+      'Live. Intimate. Unfiltered. New music, new energy and a new level — live performances, special guests, VIP experiences and unforgettable nights in more cities. Tickets and VIP packages available soon.',
+    flyer: {
+      src: '/img/events/face-time-is-anytime-tour-flyer.png',
+      alt: 'Face Time Is Anytime Tour flyer: London Koi smiling in a denim and black leather outfit in front of a red curtain and city skyline, with the tour dates 2026 – 2027 and "Tickets & VIP packages available soon"',
+    },
+  },
+]
 
 /** Newest first. */
 export const pastEvents: PastEvent[] = [
