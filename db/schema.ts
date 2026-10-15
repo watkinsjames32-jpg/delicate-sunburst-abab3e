@@ -32,3 +32,27 @@ export const paypalOrders = pgTable('paypal_orders', {
 })
 
 export type PaypalOrder = typeof paypalOrders.$inferSelect
+
+/**
+ * Photos, flyers, videos and music uploaded from `/upload`. The file itself
+ * lives in the `site-uploads` Blobs store, split into `<blob_key>/<n>` chunks
+ * of `chunk_size` bytes so each request stays under the function body limit.
+ * A row is `uploading` until every chunk has arrived, then `ready`, at which
+ * point it shows in the home page Latest section.
+ */
+export const siteUploads = pgTable('site_uploads', {
+  id: serial().primaryKey(),
+  blobKey: text('blob_key').notNull().unique(),
+  kind: text().notNull(),
+  title: text().notNull(),
+  caption: text(),
+  filename: text().notNull(),
+  contentType: text('content_type').notNull(),
+  size: integer().notNull(),
+  chunkSize: integer('chunk_size').notNull(),
+  chunkCount: integer('chunk_count').notNull(),
+  status: text().notNull().default('uploading'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+})
+
+export type SiteUpload = typeof siteUploads.$inferSelect

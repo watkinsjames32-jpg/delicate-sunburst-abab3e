@@ -5,12 +5,15 @@ import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site
 import { featuredProduct, merch } from '../data/catalog'
 import { pastEvents, upcomingEvents } from '../data/events'
 import type { EventMedia, PastEvent, UpcomingEvent } from '../data/events'
+import { getLatestUploads } from '../server/uploads.functions'
+import type { PublicUpload } from '../server/uploads'
 import { siteUrl } from './__root'
 
 export const Route = createFileRoute('/')({
   head: () => ({
     links: [{ rel: 'canonical', href: `${siteUrl}/` }],
   }),
+  loader: () => getLatestUploads(),
   component: Home,
 })
 
@@ -599,13 +602,104 @@ function Booking() {
   )
 }
 
+/**
+ * Photos, flyers, videos and music uploaded from `/upload`, newest first.
+ * Hidden entirely until something has been uploaded.
+ */
+function Latest({ uploads }: { uploads: PublicUpload[] }) {
+  if (uploads.length === 0) return null
+
+  const visuals = uploads.filter((u) => u.kind === 'photo' || u.kind === 'flyer')
+  const videos = uploads.filter((u) => u.kind === 'video')
+  const music = uploads.filter((u) => u.kind === 'music')
+
+  return (
+    <section id="latest" className="py-24 px-6 bg-white text-slate-900 scroll-mt-20">
+      <div className="max-w-5xl mx-auto">
+        <p className="uppercase tracking-[0.3em] text-sky-700 text-sm font-semibold mb-3 text-center">
+          Fresh Uploads
+        </p>
+        <h2 className="text-3xl font-bold mb-12 text-center">Latest from London</h2>
+
+        {music.length > 0 && (
+          <ul className="grid gap-4 sm:grid-cols-2 mb-10">
+            {music.map((u) => (
+              <li key={u.id} className="rounded-2xl border border-sky-200 bg-sky-50 p-5">
+                <p className="font-semibold text-slate-900">{u.title}</p>
+                {u.caption && <p className="text-sm text-slate-600 mt-1">{u.caption}</p>}
+                <audio controls preload="none" src={u.url} className="w-full mt-4" aria-label={u.title} />
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {videos.length > 0 && (
+          <div className="grid gap-6 sm:grid-cols-2 mb-10">
+            {videos.map((u) => (
+              <figure key={u.id} className="rounded-2xl overflow-hidden border border-sky-200 bg-slate-900">
+                <video controls playsInline preload="metadata" className="w-full max-h-[32rem] bg-black">
+                  <source src={u.url} type={u.contentType === 'video/quicktime' ? 'video/mp4' : u.contentType} />
+                </video>
+                <figcaption className="bg-white px-4 py-3">
+                  <p className="font-semibold">{u.title}</p>
+                  {u.caption && <p className="text-sm text-slate-600">{u.caption}</p>}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
+
+        {visuals.length > 0 && (
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
+            {visuals.map((u) => (
+              <UploadedImage key={u.id} upload={u} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function UploadedImage({ upload }: { upload: PublicUpload }) {
+  // Tries the Image CDN for a resized copy, and falls back to the original file.
+  const [src, setSrc] = useState(() => img(upload.url, 700))
+  const isPdf = upload.contentType === 'application/pdf'
+
+  return (
+    <figure className="rounded-2xl overflow-hidden border border-sky-200 bg-sky-50">
+      <a href={upload.url} target="_blank" rel="noopener noreferrer" className="block">
+        {isPdf ? (
+          <div className="aspect-square flex items-center justify-center text-sky-800 font-semibold">
+            View flyer (PDF)
+          </div>
+        ) : (
+          <img
+            src={src}
+            alt={upload.caption || upload.title}
+            loading="lazy"
+            onError={() => setSrc((current) => (current === upload.url ? current : upload.url))}
+            className={`w-full ${upload.kind === 'flyer' ? 'object-contain bg-white' : 'aspect-square object-cover'}`}
+          />
+        )}
+      </a>
+      <figcaption className="px-3 py-2">
+        <p className="text-sm font-semibold">{upload.title}</p>
+        {upload.caption && <p className="text-xs text-slate-600">{upload.caption}</p>}
+      </figcaption>
+    </figure>
+  )
+}
+
 function Home() {
+  const uploads = Route.useLoaderData()
   return (
     <main className="bg-sky-50">
       <Nav />
       <Hero />
       <About />
       <Events />
+      <Latest uploads={uploads} />
       <Music />
       <KoiWare />
       <Highlights />

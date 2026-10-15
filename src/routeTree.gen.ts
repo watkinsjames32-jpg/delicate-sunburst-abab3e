@@ -9,14 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UploadRouteImport } from './routes/upload'
 import { Route as MusicRouteImport } from './routes/music'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrderTokenRouteImport } from './routes/order.$token'
 import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
+import { Route as ApiUploadSessionRouteImport } from './routes/api/upload/session'
+import { Route as ApiUploadFinishRouteImport } from './routes/api/upload/finish'
+import { Route as ApiUploadFilesRouteImport } from './routes/api/upload/files'
+import { Route as ApiUploadChunkRouteImport } from './routes/api/upload/chunk'
 import { Route as ApiPaypalReturnRouteImport } from './routes/api/paypal/return'
 import { Route as ApiPaypalCheckoutRouteImport } from './routes/api/paypal/checkout'
 import { Route as ApiDownloadTokenRouteImport } from './routes/api/download.$token'
+import { Route as ApiMediaIdNameRouteImport } from './routes/api/media.$id.$name'
 
+const UploadRoute = UploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MusicRoute = MusicRouteImport.update({
   id: '/music',
   path: '/music',
@@ -37,6 +48,26 @@ const ApiCheckoutRoute = ApiCheckoutRouteImport.update({
   path: '/api/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUploadSessionRoute = ApiUploadSessionRouteImport.update({
+  id: '/api/upload/session',
+  path: '/api/upload/session',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadFinishRoute = ApiUploadFinishRouteImport.update({
+  id: '/api/upload/finish',
+  path: '/api/upload/finish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadFilesRoute = ApiUploadFilesRouteImport.update({
+  id: '/api/upload/files',
+  path: '/api/upload/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadChunkRoute = ApiUploadChunkRouteImport.update({
+  id: '/api/upload/chunk',
+  path: '/api/upload/chunk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPaypalReturnRoute = ApiPaypalReturnRouteImport.update({
   id: '/api/paypal/return',
   path: '/api/paypal/return',
@@ -52,77 +83,131 @@ const ApiDownloadTokenRoute = ApiDownloadTokenRouteImport.update({
   path: '/api/download/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMediaIdNameRoute = ApiMediaIdNameRouteImport.update({
+  id: '/api/media/$id/$name',
+  path: '/api/media/$id/$name',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/music': typeof MusicRoute
+  '/upload': typeof UploadRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/order/$token': typeof OrderTokenRoute
   '/api/download/$token': typeof ApiDownloadTokenRoute
   '/api/paypal/checkout': typeof ApiPaypalCheckoutRoute
   '/api/paypal/return': typeof ApiPaypalReturnRoute
+  '/api/upload/chunk': typeof ApiUploadChunkRoute
+  '/api/upload/files': typeof ApiUploadFilesRoute
+  '/api/upload/finish': typeof ApiUploadFinishRoute
+  '/api/upload/session': typeof ApiUploadSessionRoute
+  '/api/media/$id/$name': typeof ApiMediaIdNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/music': typeof MusicRoute
+  '/upload': typeof UploadRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/order/$token': typeof OrderTokenRoute
   '/api/download/$token': typeof ApiDownloadTokenRoute
   '/api/paypal/checkout': typeof ApiPaypalCheckoutRoute
   '/api/paypal/return': typeof ApiPaypalReturnRoute
+  '/api/upload/chunk': typeof ApiUploadChunkRoute
+  '/api/upload/files': typeof ApiUploadFilesRoute
+  '/api/upload/finish': typeof ApiUploadFinishRoute
+  '/api/upload/session': typeof ApiUploadSessionRoute
+  '/api/media/$id/$name': typeof ApiMediaIdNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/music': typeof MusicRoute
+  '/upload': typeof UploadRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/order/$token': typeof OrderTokenRoute
   '/api/download/$token': typeof ApiDownloadTokenRoute
   '/api/paypal/checkout': typeof ApiPaypalCheckoutRoute
   '/api/paypal/return': typeof ApiPaypalReturnRoute
+  '/api/upload/chunk': typeof ApiUploadChunkRoute
+  '/api/upload/files': typeof ApiUploadFilesRoute
+  '/api/upload/finish': typeof ApiUploadFinishRoute
+  '/api/upload/session': typeof ApiUploadSessionRoute
+  '/api/media/$id/$name': typeof ApiMediaIdNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/music'
+    | '/upload'
     | '/api/checkout'
     | '/order/$token'
     | '/api/download/$token'
     | '/api/paypal/checkout'
     | '/api/paypal/return'
+    | '/api/upload/chunk'
+    | '/api/upload/files'
+    | '/api/upload/finish'
+    | '/api/upload/session'
+    | '/api/media/$id/$name'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/music'
+    | '/upload'
     | '/api/checkout'
     | '/order/$token'
     | '/api/download/$token'
     | '/api/paypal/checkout'
     | '/api/paypal/return'
+    | '/api/upload/chunk'
+    | '/api/upload/files'
+    | '/api/upload/finish'
+    | '/api/upload/session'
+    | '/api/media/$id/$name'
   id:
     | '__root__'
     | '/'
     | '/music'
+    | '/upload'
     | '/api/checkout'
     | '/order/$token'
     | '/api/download/$token'
     | '/api/paypal/checkout'
     | '/api/paypal/return'
+    | '/api/upload/chunk'
+    | '/api/upload/files'
+    | '/api/upload/finish'
+    | '/api/upload/session'
+    | '/api/media/$id/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MusicRoute: typeof MusicRoute
+  UploadRoute: typeof UploadRoute
   ApiCheckoutRoute: typeof ApiCheckoutRoute
   OrderTokenRoute: typeof OrderTokenRoute
   ApiDownloadTokenRoute: typeof ApiDownloadTokenRoute
   ApiPaypalCheckoutRoute: typeof ApiPaypalCheckoutRoute
   ApiPaypalReturnRoute: typeof ApiPaypalReturnRoute
+  ApiUploadChunkRoute: typeof ApiUploadChunkRoute
+  ApiUploadFilesRoute: typeof ApiUploadFilesRoute
+  ApiUploadFinishRoute: typeof ApiUploadFinishRoute
+  ApiUploadSessionRoute: typeof ApiUploadSessionRoute
+  ApiMediaIdNameRoute: typeof ApiMediaIdNameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/upload': {
+      id: '/upload'
+      path: '/upload'
+      fullPath: '/upload'
+      preLoaderRoute: typeof UploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/music': {
       id: '/music'
       path: '/music'
@@ -151,6 +236,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/upload/session': {
+      id: '/api/upload/session'
+      path: '/api/upload/session'
+      fullPath: '/api/upload/session'
+      preLoaderRoute: typeof ApiUploadSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload/finish': {
+      id: '/api/upload/finish'
+      path: '/api/upload/finish'
+      fullPath: '/api/upload/finish'
+      preLoaderRoute: typeof ApiUploadFinishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload/files': {
+      id: '/api/upload/files'
+      path: '/api/upload/files'
+      fullPath: '/api/upload/files'
+      preLoaderRoute: typeof ApiUploadFilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload/chunk': {
+      id: '/api/upload/chunk'
+      path: '/api/upload/chunk'
+      fullPath: '/api/upload/chunk'
+      preLoaderRoute: typeof ApiUploadChunkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/paypal/return': {
       id: '/api/paypal/return'
       path: '/api/paypal/return'
@@ -172,17 +285,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDownloadTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/media/$id/$name': {
+      id: '/api/media/$id/$name'
+      path: '/api/media/$id/$name'
+      fullPath: '/api/media/$id/$name'
+      preLoaderRoute: typeof ApiMediaIdNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MusicRoute: MusicRoute,
+  UploadRoute: UploadRoute,
   ApiCheckoutRoute: ApiCheckoutRoute,
   OrderTokenRoute: OrderTokenRoute,
   ApiDownloadTokenRoute: ApiDownloadTokenRoute,
   ApiPaypalCheckoutRoute: ApiPaypalCheckoutRoute,
   ApiPaypalReturnRoute: ApiPaypalReturnRoute,
+  ApiUploadChunkRoute: ApiUploadChunkRoute,
+  ApiUploadFilesRoute: ApiUploadFilesRoute,
+  ApiUploadFinishRoute: ApiUploadFinishRoute,
+  ApiUploadSessionRoute: ApiUploadSessionRoute,
+  ApiMediaIdNameRoute: ApiMediaIdNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
