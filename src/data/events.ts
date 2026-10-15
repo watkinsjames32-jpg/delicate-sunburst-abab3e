@@ -1,6 +1,12 @@
 /** A photo or video from a featured performance, served out of `public/`. */
 export type EventMedia =
-  | { type: 'photo'; src: string; alt: string }
+  | {
+      type: 'photo'
+      src: string
+      alt: string
+      /** `contain` shows the whole image (e.g. a flyer with text) instead of cropping it square. */
+      fit?: 'cover' | 'contain'
+    }
   | {
       type: 'video'
       src: string
@@ -53,6 +59,19 @@ export const upcomingEvents: UpcomingEvent[] = []
 
 /** Newest first. */
 export const pastEvents: PastEvent[] = [
+  {
+    title: 'Featured in MotoAmerica Magazine',
+    date: 'May 2026',
+    description: 'London Koi was featured in the May 2026 issue of MotoAmerica Magazine.',
+    media: [
+      {
+        type: 'photo',
+        src: '/img/events/motoamerica-magazine-flyer.jpg',
+        alt: 'Flyer reading "Featured in MotoAmerica Magazine, May 2026", showing London Koi with a VIP pass in front of a MotoAmerica, FIM North America and AMA step-and-repeat backdrop',
+        fit: 'contain',
+      },
+    ],
+  },
   {
     title: 'WATC 57 Atlanta Live!',
     location: 'Atlanta, Georgia',
