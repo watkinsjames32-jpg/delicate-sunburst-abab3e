@@ -12,7 +12,7 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 | Styling | Tailwind CSS 4 |
 | Forms | Netlify Forms (booking/contact) |
 | Payments | Shopify (Storefront API cart checkout), PayPal (Orders v2 API) and Bandcamp (outbound links) |
-| Database | Netlify Database (Postgres) via Drizzle ORM — PayPal orders |
+| Database | Netlify Database (Postgres) via Drizzle ORM — PayPal orders, site uploads |
 | Language | TypeScript 5 |
 | Package manager | pnpm (`pnpm-lock.yaml` is the source of truth) |
 | Deployment | Netlify |
@@ -37,9 +37,12 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 │   │   ├── index.tsx        # Home page: hero, about, music, highlights, booking form
 │   │   ├── music.tsx        # Store page: music + Koi Ware merch, Shopify + PayPal + Bandcamp buttons
 │   │   ├── order.$token.tsx # Buyer's PayPal order page: download link or shipping confirmation
+│   │   ├── upload.tsx       # Password-protected page for uploading photos, flyers, videos and music
 │   │   └── api
 │   │       ├── checkout.ts  # POST → creates a Shopify cart, returns its checkout URL
 │   │       ├── download.$token.ts # GET → master MP3 for a completed PayPal order
+│   │       ├── media.$id.$name.ts # GET → a file uploaded from /upload (Range-aware)
+│   │       ├── upload/      # session / files / chunk / finish endpoints behind /upload
 │   │       └── paypal
 │   │           ├── checkout.ts # POST → creates a PayPal order, returns its approval URL
 │   │           └── return.ts   # GET ← PayPal return: captures payment, redirects to /order/<token>
@@ -50,6 +53,9 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 │   │   ├── orders.ts        # PayPal order records in Netlify Database
 │   │   ├── orders.functions.ts # Server function for the order page
 │   │   ├── downloads.ts     # Masters in the `music-downloads` Blobs store
+│   │   ├── uploads.ts       # Site uploads: `site_uploads` table + chunked `site-uploads` Blobs store
+│   │   ├── uploads.functions.ts # Server function for the home page Latest section
+│   │   ├── chunked-media.ts # Range parsing + chunk stitching (tested in tests/uploads.test.mjs)
 │   │   ├── storefront.ts    # Which storefronts can sell each item
 │   │   ├── storefront.functions.ts # Server function the store page loads availability through
 │   │   └── env.ts           # Loose environment variable lookup shared by the above
@@ -83,6 +89,19 @@ set). A YouTube video is listed as `{ type: 'youtube', id, title }` and embedded
 through youtube-nocookie.com. An event with no media shows a "Photos and video coming soon" tile, and any file that is
 missing or unplayable hides itself, so media can be listed before it is uploaded. Convert HEIC
 phone photos to JPEG first; phone videos should be MP4 (H.264) to play in every browser.
+
+### Uploads
+
+`/upload` (linked from the **Upload** button in the footer) lets London's team add photos, flyers,
+videos and music without GitHub. It is unlocked with the `UPLOAD_PASSWORD` site environment
+variable; while that is unset, uploading is switched off. Files go into the `site-uploads` Blobs
+store and a row in `site_uploads`; because function requests are capped at a few MB, the browser
+sends each file in 3 MiB chunks (`<blob_key>/<n>`), and `/api/media/<id>/<name>` stitches them back
+together, honouring Range requests so video and audio can seek. Up to 500 MB per file; HEIC photos
+are rejected with a hint to export JPEG. A finished upload appears at once in the home page
+**Latest from London** section (`#latest`, under Events, hidden while empty) — music as players,
+videos inline, photos and flyers in a grid — and can be deleted from the list on `/upload`.
+Uploaded files are public; private PayPal masters still live in `music-downloads`.
 
 ### Booking form
 
@@ -118,6 +137,8 @@ them. Only PayPal orders have an order page here.
 The store page offers PayPal for merchandise and singles whose private MP3 masters are uploaded, once PayPal accepts the configured credentials. Existing Bandcamp links remain available. The page loads public availability through `getPaypalStorefront()`; credentials never leave the server. Merch cards collect size and colour before starting checkout. Shipping addresses are collected on PayPal. The receipt page rechecks pending payments and recovers interrupted confirmation, without marking an unverified payment completed. Repeated captures use a stable PayPal request ID. Download counts are consumed only after the master exists.
 
 An item may instead set `paypalPaymentUrl` in `catalog.ts` to a PayPal hosted payment link (`https://www.paypal.com/ncp/payment/...`). Its **Buy with PayPal** button then opens that link in a new tab, skipping `/api/paypal/checkout`: PayPal takes the payment and emails the seller, but the order isn't recorded in `paypal_orders` and no download is served from this site, so the file has to be sent by hand (or attached in PayPal). FaceTime, Ride The Wave, Be Great, Special and the Koi Ware Logo Tee use one; a merch card with a link lists its sizes and colours as text, since the buyer picks them on PayPal. The home page New Hot Single section's **Buy with PayPal** button opens `featuredProduct`'s link the same way (or goes to `/music` if it has none).
+
+Run `node --test tests/uploads.test.mjs` to check upload chunk stitching.
 
 Run `node --test tests/paypal.test.mjs` for mocked REST checks (no real charges).
 

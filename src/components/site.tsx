@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Pause, Play, Youtube } from 'lucide-react'
+import { Pause, Play, Upload, Youtube } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 /** Build a Netlify Image CDN URL so large source images are resized + served as WebP. */
@@ -59,6 +59,13 @@ export function Footer() {
           <a href="/#booking" className="hover:text-slate-800 transition-colors">
             Booking
           </a>
+          <Link
+            to="/upload"
+            className="inline-flex items-center gap-1.5 rounded-full border border-sky-300 bg-white px-3 py-1 text-slate-700 hover:border-slate-400 transition-colors"
+          >
+            <Upload className="w-3.5 h-3.5" aria-hidden="true" />
+            Upload
+          </Link>
         </nav>
         <p>&copy; {new Date().getFullYear()} London Koi. All rights reserved.</p>
       </div>
