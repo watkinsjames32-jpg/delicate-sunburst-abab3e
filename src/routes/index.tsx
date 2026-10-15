@@ -166,7 +166,7 @@ function UpcomingEventRow({ event }: { event: UpcomingEvent }) {
           href={flyer.src}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full max-w-xs mx-auto sm:mx-0 sm:w-56 shrink-0 aspect-[2/3] rounded-2xl overflow-hidden bg-slate-900"
+          className={`block w-full max-w-xs mx-auto sm:mx-0 sm:w-56 shrink-0 ${flyer.square ? 'aspect-square' : 'aspect-[2/3]'} rounded-2xl overflow-hidden bg-slate-900`}
         >
           <img
             src={img(flyer.src, 448)}
