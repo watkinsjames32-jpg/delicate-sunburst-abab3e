@@ -79,7 +79,8 @@ link to the booking form. Once a show has happened, move it into `pastEvents`.
 **Past Events** is driven by `pastEvents` in `src/data/events.ts`, newest first. Each event has a title, optional date/location/description,
 and a `media` list. Photos go in `public/img/events/` and are served through the Image CDN;
 videos go in `public/video/events/` and are served directly (an optional `poster` still can be
-set). A YouTube video is listed as `{ type: 'youtube', id, title }` and embedded full-width
+set). Photos are cropped to square tiles; set `fit: 'contain'` on a photo (as the MotoAmerica
+Magazine flyer does) to show the whole image uncropped, for flyers with text. A YouTube video is listed as `{ type: 'youtube', id, title }` and embedded full-width
 through youtube-nocookie.com. An event with no media shows a "Photos and video coming soon" tile, and any file that is
 missing or unplayable hides itself, so media can be listed before it is uploaded. Convert HEIC
 phone photos to JPEG first; phone videos should be MP4 (H.264) to play in every browser.
