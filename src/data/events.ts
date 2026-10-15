@@ -45,8 +45,9 @@ export type UpcomingEvent = {
   /**
    * Portrait tour or show poster in `public/img/events/`, shown through the Image
    * CDN beside the details and linked to the full-size file. Hides itself if missing.
+   * Set `square` for a 1:1 social-media flyer so it isn't cropped to portrait.
    */
-  flyer?: { src: string; alt: string }
+  flyer?: { src: string; alt: string; square?: boolean }
 }
 
 /**
@@ -55,6 +56,17 @@ export type UpcomingEvent = {
  * (adding any photos or video) so it shows under Past Events.
  */
 export const upcomingEvents: UpcomingEvent[] = [
+  {
+    title: 'FaceTime Remix Superstar 100 Contest',
+    date: 'Now open',
+    description:
+      'Join the #FaceTimeRemixChallenge for a chance to win an iPhone. Like, comment and share to take part.',
+    flyer: {
+      src: '/img/events/facetime-remix-superstar-100-contest-flyer.jpg',
+      alt: 'FaceTime Remix Superstar 100 Contest flyer: London Koi in a studded denim jacket and black tie above the FaceTime Remix logo, with "Like | Comment | Share" and "Join the #FaceTimeRemixChallenge for a chance to win an iPhone"',
+      square: true,
+    },
+  },
   {
     title: 'Face Time Is Anytime Tour',
     date: '2026 – 2027',
