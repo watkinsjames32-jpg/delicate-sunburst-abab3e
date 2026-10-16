@@ -77,6 +77,16 @@ export const upcomingEvents: UpcomingEvent[] = [
       alt: 'Face Time Is Anytime Tour flyer: London Koi smiling in a denim and black leather outfit in front of a red curtain and city skyline, with the tour dates 2026 – 2027 and "Tickets & VIP packages available soon"',
     },
   },
+  {
+    title: 'London Koi × Formula 1',
+    date: 'Coming soon',
+    description:
+      'Dreams. Drive. Music. London Koi. Big dreams, fast moves — same girl, bigger dreams. Singer, songwriter, actor.',
+    flyer: {
+      src: '/img/events/london-koi-formula-1-flyer.jpg',
+      alt: 'London Koi × Formula 1 flyer: London Koi smiling, seated on a white block in a colourful patchwork jacket and jewelled jeans beside a Formula 1 car and checkered flags, with "Dreams. Drive. Music. London Koi.", "Big Dreams Fast Moves" and "Same girl. Bigger dreams."',
+    },
+  },
 ]
 
 /** Newest first. */
