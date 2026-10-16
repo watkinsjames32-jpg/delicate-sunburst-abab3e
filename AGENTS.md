@@ -75,7 +75,7 @@ The Events section (`#events`, which merged the former Featured Performances sec
 title, a free-text `date`, optional `venue`/`location`/`description`, and an optional `ticketUrl`
 shown as a "Get tickets" button, plus an optional `flyer` (`src`, `alt`) — a portrait poster in
 `public/img/events/` shown beside the details through the Image CDN, linking to the full-size file, and hidden if
-missing (the Face Time Is Anytime Tour uses one). A 1:1 social-media flyer sets `square: true` so it isn't cropped to portrait (the FaceTime Remix Superstar 100 Contest uses one). While the list is empty it shows "New dates coming soon" with a
+missing (the Face Time Is Anytime Tour and London Koi × Formula 1 use one). A 1:1 social-media flyer sets `square: true` so it isn't cropped to portrait (the FaceTime Remix Superstar 100 Contest uses one). While the list is empty it shows "New dates coming soon" with a
 link to the booking form. Once a show has happened, move it into `pastEvents`.
 
 **Past Events** is driven by `pastEvents` in `src/data/events.ts`, newest first. Each event has a title, optional date/location/description,
