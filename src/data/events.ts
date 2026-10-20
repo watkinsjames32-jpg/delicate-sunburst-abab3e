@@ -123,6 +123,11 @@ export const pastEvents: PastEvent[] = [
         src: '/img/events/studio-recording-session.jpg',
         alt: 'London Koi in headphones in a purple vocal booth, seated beside the studio microphone during a recording session',
       },
+      {
+        type: 'photo',
+        src: '/img/events/london-koi-with-david-sea.jpg',
+        alt: 'London Koi smiling between two men backstage at night, one holding a Steel City Smooth Jazz Music Festival lifetime achievement plaque for David Sea of The Temptations',
+      },
     ],
   },
 ]
