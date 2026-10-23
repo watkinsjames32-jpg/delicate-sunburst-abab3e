@@ -31,7 +31,8 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 │   │   └── site.tsx         # Shared nav + footer + preview player + Netlify Image CDN helper
 │   ├── data
 │   │   ├── catalog.ts       # Purchasable releases + Koi Ware merch (price, art, sizes)
-│   │   └── events.ts        # Events under the bio: upcoming shows + past performances (photos, videos, YouTube)
+│   │   ├── interviews.ts    # Interviews under the bio (press, TV, podcasts)
+│   │   └── events.ts        # Events under the interviews: upcoming shows + past performances (photos, videos, YouTube)
 │   ├── routes
 │   │   ├── __root.tsx       # Root layout: HTML shell, page title/meta
 │   │   ├── index.tsx        # Home page: hero, about, music, highlights, booking form
@@ -63,9 +64,18 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 
 ## Key Concepts
 
-The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
+The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#interviews`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
 
 The palette is a light blue theme: `sky` tones for backgrounds and eyebrow text, `slate` for body copy, and `amber` for primary buttons (picked up from the yellow blazer in the hero photo).
+
+### Interviews
+
+The Interviews section (`#interviews`) sits directly under the bio, before Events, and is driven
+by `interviews` in `src/data/interviews.ts`, newest first. Each has a `title` and `outlet`, plus an
+optional `date`, `summary`, pull `quote` from London, and `url` (shown as a "Read or watch the
+interview" button). A video interview sets `youtubeId` (embedded through youtube-nocookie.com) or
+`video`, a clip in `public/video/interviews/` served directly that hides itself if missing. While
+the list is empty it shows "Interviews coming soon" with a link to the booking form.
 
 ### Events
 
