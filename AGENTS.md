@@ -63,9 +63,18 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 
 ## Key Concepts
 
-The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
+The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#interviews`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
 
 The palette is a light blue theme: `sky` tones for backgrounds and eyebrow text, `slate` for body copy, and `amber` for primary buttons (picked up from the yellow blazer in the hero photo).
+
+### Interviews
+
+The Interviews & Press section (`#interviews`, linked from the nav) sits directly after About London,
+before Events. It is driven by `src/data/interviews.ts`, newest first in each list:
+`videoInterviews` (`{ id, title, outlet?, date? }`, a YouTube video ID embedded through
+youtube-nocookie.com) and `pressLinks` (`{ title, outlet, url, kind: 'article' | 'podcast', date?,
+description? }`, shown as cards that open the outlet's page in a new tab). While both lists are
+empty it shows "Interviews coming soon" with a link to the booking form.
 
 ### Events
 

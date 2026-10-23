@@ -5,6 +5,7 @@ import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site
 import { featuredProduct, merch } from '../data/catalog'
 import { pastEvents, upcomingEvents } from '../data/events'
 import type { EventMedia, PastEvent, UpcomingEvent } from '../data/events'
+import { pressLinks, videoInterviews } from '../data/interviews'
 import { siteUrl } from './__root'
 
 export const Route = createFileRoute('/')({
@@ -110,6 +111,87 @@ function About() {
             chasing a dream is just as direct: &ldquo;If you believe it, you can achieve it.&rdquo;
           </p>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function Interviews() {
+  const empty = videoInterviews.length === 0 && pressLinks.length === 0
+  return (
+    <section id="interviews" className="py-24 px-6 bg-white border-t border-sky-100 text-slate-900 scroll-mt-20">
+      <div className="max-w-5xl mx-auto">
+        <p className="uppercase tracking-[0.3em] text-sky-700 text-sm font-semibold mb-3 text-center">
+          In Her Own Words
+        </p>
+        <h2 className="text-3xl font-bold mb-12 text-center">Interviews &amp; Press</h2>
+
+        {empty ? (
+          <div className="rounded-3xl border border-dashed border-sky-300 bg-sky-50 py-12 px-6 text-center text-slate-500">
+            Interviews coming soon. Media inquiries are welcome through the{' '}
+            <a href="#booking" className="text-sky-700 font-semibold hover:text-sky-900 underline-offset-4 hover:underline">
+              booking form
+            </a>
+            .
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {videoInterviews.length > 0 && (
+              <div className="grid gap-8 md:grid-cols-2">
+                {videoInterviews.map((video) => (
+                  <figure key={video.id}>
+                    <div className="aspect-video rounded-2xl overflow-hidden bg-slate-900 shadow-lg">
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${video.id}`}
+                        title={video.title}
+                        loading="lazy"
+                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <figcaption className="mt-3">
+                      <span className="font-semibold text-slate-800">{video.title}</span>
+                      {(video.outlet || video.date) && (
+                        <span className="block text-sm text-slate-500">
+                          {[video.outlet, video.date].filter(Boolean).join(' · ')}
+                        </span>
+                      )}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
+
+            {pressLinks.length > 0 && (
+              <ul className="grid gap-4 md:grid-cols-2">
+                {pressLinks.map((link) => (
+                  <li key={link.url}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block h-full rounded-2xl bg-sky-50 ring-1 ring-sky-200 p-6 hover:ring-amber-400 hover:shadow-md transition"
+                    >
+                      <span className="text-xs uppercase tracking-widest font-semibold text-sky-700">
+                        {link.kind === 'podcast' ? 'Podcast' : 'Article'} · {link.outlet}
+                        {link.date ? ` · ${link.date}` : ''}
+                      </span>
+                      <span className="block mt-2 text-lg font-semibold text-slate-900">{link.title}</span>
+                      {link.description && (
+                        <span className="block mt-2 text-slate-600">{link.description}</span>
+                      )}
+                      <span className="block mt-4 text-sm font-semibold text-amber-600">
+                        {link.kind === 'podcast' ? 'Listen' : 'Read'} &rarr;
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     </section>
   )
@@ -630,6 +712,7 @@ function Home() {
       <Nav />
       <Hero />
       <About />
+      <Interviews />
       <Events />
       <Music />
       <KoiWare />
