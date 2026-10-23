@@ -27,7 +27,7 @@ export type PastEvent = {
    * Photos go in `public/img/events/` (shown through the Image CDN), videos in
    * `public/video/events/` (served directly). Empty until files are sent over;
    * the card shows a placeholder tile instead. YouTube videos are embedded by ID
-   * and span the full width of the card.
+   * and are centred at up to 36rem wide, spanning the row.
    */
   media: EventMedia[]
 }
