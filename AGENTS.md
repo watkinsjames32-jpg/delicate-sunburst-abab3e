@@ -63,9 +63,16 @@ Official website for London Koi, a young R&B/soul recording artist from Birmingh
 
 ## Key Concepts
 
-The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
+The home page (`src/routes/index.tsx`) is a single page with anchor-linked sections (`#about`, `#interview`, `#events`, `#music`, `#merch`, `#highlights`, `#booking`). The store (`src/routes/music.tsx`) is the only other page. Nav and footer are shared through `src/components/site.tsx` so both pages stay in step. There is no CMS — releases and merch are typed arrays in `src/data/catalog.ts`.
 
 The palette is a light blue theme: `sky` tones for backgrounds and eyebrow text, `slate` for body copy, and `amber` for primary buttons (picked up from the yellow blazer in the hero photo).
+
+### Interview
+
+The London Koi Interview section (`#interview`) sits between the bio and Events. Its Q&A is the
+`interview` array at the top of `src/routes/index.tsx`, using London's own published quotes; the
+photo is `public/img/interview/london-koi-field-interview.jpg` (an on-field pre-game interview),
+served through the Image CDN and linking to the full-size file.
 
 ### Events
 

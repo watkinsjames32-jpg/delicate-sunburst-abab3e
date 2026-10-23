@@ -18,6 +18,9 @@ export function Nav() {
           <a href="/#about" className="hover:text-slate-900 transition-colors">
             About
           </a>
+          <a href="/#interview" className="hover:text-slate-900 transition-colors">
+            Interview
+          </a>
           <a href="/#events" className="hover:text-slate-900 transition-colors">
             Events
           </a>
