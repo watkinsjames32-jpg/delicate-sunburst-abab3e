@@ -115,6 +115,69 @@ function About() {
   )
 }
 
+// Answers are London's own words from her published interview, also quoted in About.
+const interview = [
+  {
+    question: 'How would you describe your sound?',
+    answer:
+      'I feel like I give an R&B, soulful sound. I’ve always felt like an old soul.',
+  },
+  {
+    question: 'What does it feel like when you’re on stage?',
+    answer: 'When I sing, it just feels natural. It’s been a part of me for so long.',
+  },
+  {
+    question: 'What would you tell other kids chasing a dream?',
+    answer: 'If you believe it, you can achieve it.',
+  },
+]
+
+const INTERVIEW_PHOTO = '/img/interview/london-koi-field-interview.jpg'
+
+function Interview() {
+  return (
+    <section id="interview" className="py-24 px-6 bg-sky-100 text-slate-900 scroll-mt-20">
+      <div className="max-w-5xl mx-auto grid gap-12 md:grid-cols-[2fr_3fr] md:items-center">
+        <figure>
+          <a
+            href={INTERVIEW_PHOTO}
+            className="block aspect-3/4 rounded-3xl overflow-hidden shadow-xl ring-1 ring-sky-300/60 bg-sky-200"
+          >
+            <img
+              src={img(INTERVIEW_PHOTO, 700)}
+              srcSet={`${img(INTERVIEW_PHOTO, 500)} 500w, ${img(INTERVIEW_PHOTO, 700)} 700w, ${img(INTERVIEW_PHOTO, 1000)} 1000w`}
+              sizes="(min-width: 768px) 40vw, 90vw"
+              alt="London Koi, holding a microphone, being interviewed on a stadium football field"
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </a>
+          <figcaption className="mt-3 text-sm text-slate-500 text-center">
+            London on the field for a pre-game interview.
+          </figcaption>
+        </figure>
+
+        <div>
+          <p className="uppercase tracking-[0.3em] text-sky-700 text-sm font-semibold mb-3">
+            In Her Own Words
+          </p>
+          <h2 className="text-3xl font-bold mb-8">London Koi Interview</h2>
+          <dl className="space-y-7">
+            {interview.map(({ question, answer }) => (
+              <div key={question}>
+                <dt className="font-semibold text-slate-800 mb-2">{question}</dt>
+                <dd className="border-l-4 border-amber-400 pl-5 italic text-slate-700 text-lg leading-relaxed">
+                  &ldquo;{answer}&rdquo;
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Events() {
   return (
     <section id="events" className="py-24 px-6 bg-sky-50 text-slate-900 scroll-mt-20">
@@ -630,6 +693,7 @@ function Home() {
       <Nav />
       <Hero />
       <About />
+      <Interview />
       <Events />
       <Music />
       <KoiWare />
