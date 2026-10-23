@@ -244,7 +244,7 @@ function EventMediaTile({ item }: { item: EventMedia }) {
 
   if (item.type === 'youtube') {
     return (
-      <div className="col-span-2 md:col-span-3 aspect-video rounded-2xl overflow-hidden bg-slate-900">
+      <div className="col-span-2 md:col-span-3 w-full max-w-xl mx-auto aspect-video rounded-2xl overflow-hidden bg-slate-900">
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${item.id}`}
           title={item.title}
