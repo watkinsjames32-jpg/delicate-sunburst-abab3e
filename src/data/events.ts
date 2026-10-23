@@ -57,6 +57,16 @@ export type UpcomingEvent = {
  */
 export const upcomingEvents: UpcomingEvent[] = [
   {
+    title: "Buy London Koi's Music Now!",
+    date: 'Out now',
+    description:
+      'New music. New energy. Same queen. New level. Be the first to get "FaceTime" and "Tomorrow" — stream, download, and shop music, merch and more at londonkoi.org.',
+    flyer: {
+      src: '/img/events/buy-london-koi-music-now-flyer.jpg',
+      alt: 'Buy London Koi\'s Music Now! flyer: London Koi smiling in a black leather and denim outfit in front of a neon pink city skyline, with "FaceTime" and "Tomorrow" single covers, "Be the first to get it! It\'s hot!" and "londonkoi.org — Buy music • Merch • And more"',
+    },
+  },
+  {
     title: 'FaceTime Remix Superstar 100 Contest',
     date: 'Now open',
     description:
