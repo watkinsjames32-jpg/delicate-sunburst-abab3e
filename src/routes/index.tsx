@@ -65,18 +65,47 @@ function Hero() {
         </div>
 
         <div className="relative">
-          <div className="aspect-4/5 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-sky-300/60 bg-sky-200">
-            <img
-              src={img('/img/london-koi-portrait.jpg', 900)}
-              srcSet={`${img('/img/london-koi-portrait.jpg', 600)} 600w, ${img('/img/london-koi-portrait.jpg', 900)} 900w, ${img('/img/london-koi-portrait.jpg', 1300)} 1300w`}
-              sizes="(min-width: 768px) 45vw, 90vw"
-              alt="London Koi, a young R&B and soul vocalist, photographed in a yellow blazer"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <HeroVideo />
         </div>
       </div>
     </section>
+  )
+}
+
+const HERO_PORTRAIT = '/img/london-koi-portrait.jpg'
+
+// FaceTime video in the hero (muted autoplay loop, unmute via controls); falls back to the
+// promo portrait if the clip is missing or unplayable.
+function HeroVideo() {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="aspect-4/5 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-sky-300/60 bg-sky-200">
+        <img
+          src={img(HERO_PORTRAIT, 900)}
+          srcSet={`${img(HERO_PORTRAIT, 600)} 600w, ${img(HERO_PORTRAIT, 900)} 900w, ${img(HERO_PORTRAIT, 1300)} 1300w`}
+          sizes="(min-width: 768px) 45vw, 90vw"
+          alt="London Koi, a young R&B and soul vocalist, photographed in a yellow blazer"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    )
+  }
+  return (
+    <div className="mx-auto max-w-xs sm:max-w-sm aspect-[406/720] rounded-3xl overflow-hidden shadow-2xl ring-1 ring-sky-300/60 bg-slate-900">
+      <video
+        src={FEATURED_VIDEO}
+        autoPlay
+        muted
+        loop
+        controls
+        playsInline
+        preload="metadata"
+        onError={() => setFailed(true)}
+        aria-label='London Koi "FaceTime" video'
+        className="w-full h-full object-cover"
+      />
+    </div>
   )
 }
 
