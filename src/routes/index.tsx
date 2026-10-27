@@ -30,6 +30,9 @@ const highlights = [
   },
 ]
 
+/** YouTube video in the hero: London Koi singing the National Anthem at the 2026 Formula 1 United States Grand Prix (COTA, Austin). */
+const HERO_VIDEO_ID = '13FJ3ZH5ZlM'
+
 function Hero() {
   return (
     <section
@@ -65,15 +68,19 @@ function Hero() {
         </div>
 
         <div className="relative">
-          <div className="aspect-4/5 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-sky-300/60 bg-sky-200">
-            <img
-              src={img('/img/london-koi-portrait.jpg', 900)}
-              srcSet={`${img('/img/london-koi-portrait.jpg', 600)} 600w, ${img('/img/london-koi-portrait.jpg', 900)} 900w, ${img('/img/london-koi-portrait.jpg', 1300)} 1300w`}
-              sizes="(min-width: 768px) 45vw, 90vw"
-              alt="London Koi, a young R&B and soul vocalist, photographed in a yellow blazer"
-              className="w-full h-full object-cover"
+          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl ring-1 ring-sky-300/60 bg-slate-900">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${HERO_VIDEO_ID}`}
+              title="London Koi sings the National Anthem at the Formula 1 United States Grand Prix 2026 in Austin, Texas"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+              className="w-full h-full"
             />
           </div>
+          <p className="mt-3 text-sm text-slate-600 text-center md:text-left">
+            National Anthem &middot; Formula 1 United States Grand Prix 2026, Austin, Texas
+          </p>
         </div>
       </div>
     </section>
