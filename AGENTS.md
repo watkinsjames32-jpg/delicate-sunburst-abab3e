@@ -71,7 +71,7 @@ The palette is a light blue theme: `sky` tones for backgrounds and eyebrow text,
 ### Interviews
 
 The Interviews section (`#interviews`, also in the nav) sits directly under the bio, above Events.
-It is driven by `interviews` in `src/data/interviews.ts`, newest first — each has a `title`,
+It is driven by `interviews` in `src/data/interviews.ts`, newest first (currently the Good Day Alabama interview on WBRC FOX6, with no date, link or video yet) — each has a `title`,
 `outlet`, optional free-text `date`, `description` and `quote` (a line London said, shown as a pull
 quote), an optional `youtubeId` embedded through youtube-nocookie.com, and an optional https `url`
 shown as a button (wording from `linkLabel`, default "Read the interview"). While the list is empty

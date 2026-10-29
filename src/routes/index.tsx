@@ -133,7 +133,11 @@ function Interviews() {
         </p>
         <h2 className="text-3xl font-bold mb-12 text-center">Interviews</h2>
         {interviews.length > 0 ? (
-          <div className="grid gap-8 md:grid-cols-2">
+          <div
+            className={
+              interviews.length > 1 ? 'grid gap-8 md:grid-cols-2' : 'grid gap-8 max-w-2xl mx-auto'
+            }
+          >
             {interviews.map((interview) => (
               <InterviewCard key={`${interview.outlet}-${interview.title}`} interview={interview} />
             ))}
