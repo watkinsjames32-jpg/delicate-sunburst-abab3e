@@ -21,7 +21,15 @@ export type Interview = {
 }
 
 /**
- * Newest first. Empty until interviews are sent over — the section then says
- * interviews are coming soon and points press to the booking form.
+ * Newest first. When empty, the section says interviews are coming soon and
+ * points press to the booking form.
  */
-export const interviews: Interview[] = []
+export const interviews: Interview[] = [
+  {
+    // Add `date`, `youtubeId` or `url` and a `quote` once the clip is sent over.
+    title: 'London Koi on Good Day Alabama',
+    outlet: 'Good Day Alabama · WBRC FOX6 News',
+    description:
+      "London Koi appeared on Birmingham's morning show Good Day Alabama on WBRC FOX6 News.",
+  },
+]
