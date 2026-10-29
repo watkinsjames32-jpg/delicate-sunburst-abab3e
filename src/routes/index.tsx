@@ -5,6 +5,8 @@ import { Footer, Nav, PreviewPlayer, YouTubeLink, img } from '../components/site
 import { featuredProduct, merch } from '../data/catalog'
 import { pastEvents, upcomingEvents } from '../data/events'
 import type { EventMedia, PastEvent, UpcomingEvent } from '../data/events'
+import { interviews } from '../data/interviews'
+import type { Interview } from '../data/interviews'
 import { siteUrl } from './__root'
 
 export const Route = createFileRoute('/')({
@@ -119,6 +121,78 @@ function About() {
         </div>
       </div>
     </section>
+  )
+}
+
+function Interviews() {
+  return (
+    <section id="interviews" className="py-24 px-6 bg-sky-50 text-slate-900 scroll-mt-20">
+      <div className="max-w-5xl mx-auto">
+        <p className="uppercase tracking-[0.3em] text-sky-700 text-sm font-semibold mb-3 text-center">
+          In Her Own Words
+        </p>
+        <h2 className="text-3xl font-bold mb-12 text-center">Interviews</h2>
+        {interviews.length > 0 ? (
+          <div className="grid gap-8 md:grid-cols-2">
+            {interviews.map((interview) => (
+              <InterviewCard key={`${interview.outlet}-${interview.title}`} interview={interview} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-3xl border border-dashed border-sky-300 bg-white py-12 px-6 text-center text-slate-500">
+            Interviews coming soon. For press and interview requests,{' '}
+            <a href="#booking" className="text-sky-700 font-semibold hover:text-sky-900 underline-offset-4 hover:underline">
+              get in touch
+            </a>
+            .
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function InterviewCard({ interview }: { interview: Interview }) {
+  const meta = [interview.outlet, interview.date].filter(Boolean).join(' · ')
+
+  return (
+    <article className="rounded-3xl border border-sky-200 bg-white shadow-sm overflow-hidden flex flex-col">
+      {interview.youtubeId && (
+        <div className="aspect-video bg-slate-900">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${interview.youtubeId}`}
+            title={`${interview.title} — ${interview.outlet}`}
+            loading="lazy"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            className="w-full h-full"
+          />
+        </div>
+      )}
+      <div className="p-7 flex-1 flex flex-col">
+        <p className="text-sm font-semibold uppercase tracking-wide text-sky-700">{meta}</p>
+        <h3 className="text-xl font-semibold text-slate-900 mt-1">{interview.title}</h3>
+        {interview.description && (
+          <p className="text-slate-600 leading-relaxed mt-3">{interview.description}</p>
+        )}
+        {interview.quote && (
+          <blockquote className="border-l-4 border-amber-400 pl-4 italic text-slate-800 mt-4">
+            &ldquo;{interview.quote}&rdquo;
+          </blockquote>
+        )}
+        {interview.url && (
+          <a
+            href={interview.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-start mt-6 px-5 py-2.5 rounded-full bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition-colors"
+          >
+            {interview.linkLabel ?? 'Read the interview'}
+          </a>
+        )}
+      </div>
+    </article>
   )
 }
 
@@ -637,6 +711,7 @@ function Home() {
       <Nav />
       <Hero />
       <About />
+      <Interviews />
       <Events />
       <Music />
       <KoiWare />
