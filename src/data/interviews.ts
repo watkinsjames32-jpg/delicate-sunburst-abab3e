@@ -14,6 +14,8 @@ export type Interview = {
    * youtube-nocookie.com instead of only being linked.
    */
   youtubeId?: string
+  /** Local MP4 interview video served directly from public/video. */
+  video?: string
   /** Absolute https link to the article, video or episode. */
   url?: string
   /** Button wording for `url`; defaults to "Read the interview". */
@@ -24,4 +26,10 @@ export type Interview = {
  * Newest first. Empty until interviews are sent over — the section then says
  * interviews are coming soon and points press to the booking form.
  */
-export const interviews: Interview[] = []
+export const interviews: Interview[] = [
+  {
+    title: 'London Koi Interview',
+    outlet: 'London Koi',
+    video: '/video/london-koi-interview.mp4',
+  },
+]

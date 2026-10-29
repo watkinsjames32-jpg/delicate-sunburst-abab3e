@@ -157,6 +157,21 @@ function InterviewCard({ interview }: { interview: Interview }) {
 
   return (
     <article className="rounded-3xl border border-sky-200 bg-white shadow-sm overflow-hidden flex flex-col">
+      {interview.video && (
+        <div className="aspect-video bg-slate-900">
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            aria-label={interview.title}
+            className="w-full h-full object-contain"
+          >
+            <source src={interview.video} type="video/mp4" />
+            Your browser does not support video playback.{' '}
+            <a href={interview.video}>Watch the interview</a>.
+          </video>
+        </div>
+      )}
       {interview.youtubeId && (
         <div className="aspect-video bg-slate-900">
           <iframe
