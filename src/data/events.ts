@@ -88,13 +88,13 @@ export const upcomingEvents: UpcomingEvent[] = [
     },
   },
   {
-    title: 'London Koi × Formula 1',
-    date: 'Coming soon',
+    title: 'FaceTime Contest',
+    date: 'Now open',
     description:
-      'Dreams. Drive. Music. London Koi. Big dreams, fast moves — same girl, bigger dreams. Singer, songwriter, actor.',
+      'Download the song "FaceTime" for a chance to win a new iPhone! Create your FaceTime mix video, post it on TikTok, Instagram or YouTube using #FaceTimemixchallenge, and show us your creativity.',
     flyer: {
-      src: '/img/events/london-koi-formula-1-flyer.jpg',
-      alt: 'London Koi × Formula 1 flyer: London Koi smiling, seated on a white block in a colourful patchwork jacket and jewelled jeans beside a Formula 1 car and checkered flags, with "Dreams. Drive. Music. London Koi.", "Big Dreams Fast Moves" and "Same girl. Bigger dreams."',
+      src: '/img/events/facetime-contest-flyer.png',
+      alt: 'London Koi FaceTime Contest flyer: London Koi smiling in a black leather and denim outfit in front of a neon pink city skyline, beside an iPhone wrapped in a pink bow, with "Download the song FaceTime for a chance to win a new iPhone!", "Join the #FaceTimemixchallenge", the steps Download, Create, Post and Get a chance to win, and "Visit londonkoi.org"',
     },
   },
 ]
